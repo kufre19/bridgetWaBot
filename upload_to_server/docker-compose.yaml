@@ -1,0 +1,53 @@
+version: "3.1"
+services:
+  app:
+    image: bridgetbot
+    container_name: bridgetbot_php8_0
+    build: 
+      context: .
+      dockerfile: .
+    restart: always
+    ports:
+      - 80:80
+      - 8000:8000
+    volumes:
+      - ./:/var/www/html
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - bridgetbot
+
+    command: "php artisan serve --host=0.0.0.0 --port=8000"
+
+   
+
+  db:
+    image: mysql:latest
+    container_name: mysql_db_bridgetbot
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+    volumes:
+      - db_data:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/mysql
+    networks:
+      - bridgetbot
+   
+  
+  phpmyadmin:
+    image: phpmyadmin:5.2.0-apache
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - bridgetbot
+
+
+networks:
+  bridgetbot:
+    driver: bridge
+
+
+volumes:
+  db_data:
