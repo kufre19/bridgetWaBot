@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 trait HandleSession
 {
+   
 
     /*
     Session codes
@@ -124,57 +125,23 @@ trait HandleSession
         $command = $data['command'];
         $command_value = $data['command_value'];
         
-        if (strpos($command_value, "cart_do") !== FALSE)
-        {
-            $this->cart_index(['cart_do','checkout']);
-        }
-
-        if (strpos($command_value, ":") !== FALSE)
-        {
-            $data = explode(":",$command_value);
-            $to_do = $data[0];
-            $to_do_value = $data[1];
-            if (strpos($this->button_id, "stress_relief") !== FALSE) {
-                $this->stress_relief_index($data);
-            }
-        }
-
+     
 
     }
+
+    public function continue_session_step($action="")
+    {
+        $this->run_action_session();
+    
+    }
+
 
     public function handle_session_command($response_from_user)
     {
         $data = $this->user_session_data['active_command'];
         $command = $data['command'];
         $command_value = $data['command_value'];
-        if (strpos($command, "cart") !== FALSE) {
-            $this->add_command_to_session();
-            $this->cart_index([$command, $command_value], $response_from_user);
-            die;
-        }
 
-        if (strpos($command, "answer_question") !== FALSE)
-        {
-        $user_session = $this->user_session_data;
-        $i = 0;
-        foreach($user_session as $data)
-        {
-            if(is_array($data))
-            {
-                if(isset($data['question']))
-                {
-                    if($data['answer'] == "")
-                    {
-                       $this->add_command_to_session();
-                       $user_session[$i]['answer'] = $response_from_user;
-                       $this->check_questions();
-                    }
-                }
-
-            }
-            $i++;
-        }
-        }
         if (strpos($command, "create_choc") !== FALSE)
         {
             $data = $this->user_session_data['active_command'];
@@ -184,48 +151,6 @@ trait HandleSession
 
         }
 
-        if (strpos($command, "add_note") !== FALSE)
-        {
-            $data = $this->user_session_data;
-            $this->add_new_object_to_session("order_note",$response_from_user);
-            // $this->user_session_data[''] = ;
-            // dd( $this->user_session_data);
-            // $this->update_session( $this->user_session_data);
-            $this->cart_index(["cart_do","checkout"]);
-
-
-        }
-        if (strpos($command, "send_link") !== FALSE)
-        {
-            $data = $this->user_session_data;
-            $this->add_new_object_to_session("docs_links",$response_from_user);
-
-            // $this->user_session_data['docs_links'] = $response_from_user;
-            // dd( $this->user_session_data);
-            // $this->update_session( $this->user_session_data);
-            $this->cart_index(["cart_do","checkout"]);
-
-
-        }
-        if(strpos($command, "set_delivery_area") !== FALSE)
-        {
-            $data = Storage::disk('public')->get('areas.json');
-            $areas_saved = json_decode($data,true);
-            $fetched_area = $areas_saved[$response_from_user] ?? null;
-            if($fetched_area == null)
-            {
-                $command = ["active_command" => true, "command" => "set_delivery_area", "command_value" => ""];
-                $this->add_command_to_session($command);
-                $this->send_text_message("please select your area for delivery from the menu below");
-                $this->send_delivery_area();
-                die;
-            }
-            $this->add_new_object_to_session("delivery_area",$fetched_area);
-            $this->cart_index(["cart_do","checkout"]);
-
-
-
-        }
         if (strpos($command, "continuation") !== FALSE)
         {
           $this->continue_session_command();
@@ -240,58 +165,23 @@ trait HandleSession
         $this->user_session_data = $data;
     }
 
-    public function add_new_journey($journey_name,$journey_value)
-    {
-        $data = $this->user_session_data;
-        $new_journey = ["journey_name" =>$journey_name, "journey_value" =>$journey_value];
-        if(!isset($data['journey']))
-        {
-            $this->add_new_object_to_session("journey",$new_journey);
+    
 
-        }else{
-            $this->user_session_data['journey']  = $new_journey;
-            $this->update_session($this->user_session_data);
-        }
-      
+    public function run_action_session($action="")
+    {
+        $session = $this->user_session_data;
+        $current_step_count = $session['current_step'];
+        $current_step_to_run = $session['steps'][$current_step_count];
+        $current_action_type = $current_step_to_run['action_type'];
+        $current_action_value = $current_step_to_run['value'];
+
+        $this->$current_action_type($current_action_value);
+        
     }
+
+    
+    
 
  
-    public function continue_journey()
-    {
-        $data =  $this->user_session_data['journey'];
-        $journey_name = $data['journey_name'];
-        $journey_value = $data['journey_value'];
-
-        // dd($data);
-
-        if($journey_name == "stress_relief")
-        {
-            if($journey_value == "show_menu")
-            {
-                $this->menu_item_id = "0:2";
-                $this->menu_index();
-            }
-
-        }
-
-        if($journey_name == "alovera")
-        {
-            if($journey_value == "show_menu")
-            {
-                $this->menu_item_id = "0:1";
-                $this->menu_index();
-            }
-
-        }
-
-        if($journey_name == "bnl")
-        {
-            $this->button_id = "bnl:".$journey_value;
-            $this->bnl_index(["bnl",$journey_value]);
-           
-            
-
-        }
-
-    }
+   
 }

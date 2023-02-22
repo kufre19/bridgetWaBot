@@ -2,110 +2,101 @@
 
 namespace App\Traits;
 
-use App\Models\FaqsModel;
 use Illuminate\Support\Facades\Config;
 
 trait HandleMenu {
-    use SendMessage, HandleCart, HandleFaq;
+    use SendMessage;
 
     public function menu_index()
     {
-        
-        if($this->menu_item_id == "faq")
+        if($this->menu_item_id == "main_menu:1")
         {
-            
-            $model = new FaqsModel();
-            $fetch = $model->get();
-            $count = count($fetch);
-            if($count < 1)
-            {
-                $this->send_text_message("Sorry No Faqs Available");
-                die;
-            }else{
-                
-                $this->send_faq_categories();
-                die;
-            }
-        }elseif (strpos($this->menu_item_id,"faq_category") !== FALSE) {
-            $command = $this->get_command_and_value_menu();
-            $this->faq_index($command);
-            $this->send_journey_menu();
+            $this->send_interactive_menu("swp_procedures");
+            die;
+        }
+        if($this->menu_item_id == "swp_procedures:4")
+        {
+            $text = <<<MSG
+            Definition: Confined space is
+            a space with limited entry and
+            egress and not suitable for
+            human inhabitants. An
+            example is the interior of a
+            storage tank, occasionally
+            entered by maintenance
+            workers but not intended for
+            human occupancy
+            MSG;
+            $data = $this->make_text_message($text);
+            $this->send_post_curl($data);
+            // $dock_link = asset("docs/SWP on Confined Space Entry rev.1.pdf");
+            $dock_link = "https://naijaprojecthub.com/ali_bot/public/docs/SWP%20on%20Confined%20Space%20Entry%20rev.1.pdf";
+            $this->send_post_curl($this->make_document_message($this->userphone,$dock_link,"SWP on Confined Space Entry rev"));
+            die;
+        }
+        if($this->menu_item_id == "main_menu:3")
+        {
+            $text = <<<MSG
+            Visitor Induction Program hasbeen developed from HSE
+            Group to ensure our Visitors a
+            Safe & Secure Visit to our
+            Facilities.
+            MSG;
+            $data = $this->make_text_message($text);
+            $this->send_post_curl($data);
+            $text ="https://kipickw.sharepoint.com/:v:/r/sites/KIPIC2/Groups%20Document%20Library/HSE%20Group/Document/Visitor%20Induction/SIV_AR.mp4?csf=1&web=1&e=2fW0ry";
+            $data = $this->make_text_message($text);
+            $this->send_post_curl($data);
+            die;
+        } 
+        if($this->menu_item_id == "main_menu:7")
+        {
+            $this->send_interactive_menu("report_incident");
+            die;
+        }
+
+        if($this->menu_item_id == "report_incident:1")
+        {
+            $text = <<<MSG
+            Please fill below details in
+            order to report your incident:
+            -Incident Description:
+            -Incident Location:
+            -Other Information:
+            -Send pictures, if any
+            MSG;
+            $data = $this->make_text_message($text);
+            $this->send_post_curl($data);
+            $this->IncidentReport();
+            $this->continue_session_step();
+
+            die;
 
         }
-        elseif ($this->menu_item_id == "0:1") {
-            $command = $this->get_command_and_value_menu();
-            $button = [
-                [
-                    "type" => "reply",
-                    "reply" => [
-                        "id" => "faq_category:alovera",
-                        "title" => "FAQs"
-                    ]
-                ]
-    
-            ];
-            $data = $this->make_button_message($this->userphone,"FAQ","See FAQs For this Product",$button);
-            $this->fetch_display_product($command[1]);
+
+        if($this->menu_item_id == "main_menu:8")
+        {
+            $text = <<<MSG
+            Welcome to Ask HSE, how can I help
+            you ?
+            MSG;
+            $data = $this->make_text_message($text);
             $this->send_post_curl($data);
-            $this->add_new_journey("alovera","show_menu");
-            die;
-        }
-        elseif ($this->menu_item_id == "0:2") {
-            $command = $this->get_command_and_value_menu();
-            $button = [
-                // [
-                //     "type" => "reply",
-                //     "reply" => [
-                //         "id" => "stress_sample:2",
-                //         "title" => "See Samples"
-                //     ]
-                // ],
-                [
-                    "type" => "reply",
-                    "reply" => [
-                        "id" => "faq_category:str_heiress_aloom",
-                        "title" => "FAQs"
-                    ]
-                ]
-               
-            ];
-            $data = $this->make_button_message($this->userphone,"Sress Relief","See FAQs And For this Product",$button);
-            $this->add_new_journey("stress_relief","show_menu");
-            $this->fetch_display_product($command[1]);
+        }else{
+            $text = <<<MSG
+            Sorry I don't understand the command.... on the bright still I'm still developing and will soon understand you!
+            MSG;
+            $data = $this->make_text_message($text);
             $this->send_post_curl($data);
             die;
-        }elseif ($this->menu_item_id == "0:3") {
-            $this->send_next_business_level_menu();
-           
-            die;
-        }elseif ($this->menu_item_id == "cart_show") {
-           $this->get_cart();
-           die;
         }
-        elseif ($this->menu_item_id == "show_privacy_policy") {
-            
-           $message = Config::get("extra_messages.policy");
-        //    dd($message);
-           $this->send_text_message($message);
-           die;
-        }elseif ($this->menu_item_id == "show_tos") {
-            
-            $message = Config::get("extra_messages.tos");
-         //    dd($message);
-            $this->send_text_message($message);
-            die;
-        }elseif (strpos($this->menu_item_id,"order") !== FALSE) {
-            
-            $command = $this->get_command_and_value_menu();
-         //    dd($message);
-            $this->handle_order_index($command);
-            die;
-        }elseif (isset($this->user_session_data['active_command'])) {
-            if (!empty($this->user_session_data['active_command'])) {
-                $this->handle_session_command($this->menu_item_id);
-            }
-        }
+
+
+        
+     
     }
+
+
 
 
     public function determin_menu()

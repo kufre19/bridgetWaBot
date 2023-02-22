@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Traits\GeneralFunctions;
 use App\Traits\HandleButton;
 use App\Traits\HandleCart;
+use App\Traits\HandleImage;
 use App\Traits\HandleMenu;
 use App\Traits\HandleSession;
 use App\Traits\HandleText;
@@ -15,7 +17,7 @@ use Illuminate\Http\Request;
 
 class BotController extends Controller
 {
-    use HandleText, HandleButton, HandleMenu, SendMessage, MessagesType, HandleSession, HandleCart;
+    use HandleText, HandleButton, HandleMenu, SendMessage, MessagesType, HandleSession,GeneralFunctions,HandleImage;
 
     public $user_message_original;
     public $user_message_lowered;
@@ -27,8 +29,8 @@ class BotController extends Controller
     public $message_type;
     public $user_session_data;
     public $user_session_status;
-    public $wa_cart;
-    public $wa_cart_message;
+    public $wa_image_id;
+  
     /* 
     @$menu_item_id holds the id sent back from selecting an item from whatsapp
     @
@@ -38,63 +40,75 @@ class BotController extends Controller
 
     public function __construct(Request $request)
     {
-        $this->username =$request['entry'][0]['changes'][0]["value"]['contacts'][0]['profile']['name'] ?? "there";
-        $this->userphone =$request['entry'][0]['changes'][0]["value"]['contacts'][0]['wa_id'];
+        //   $data = json_encode($request->all());
+        //     $file = time() .rand(). '_file.json';
+        //     $destinationPath=public_path()."/upload/";
+        //     if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
+        //     File::put($destinationPath.$file,$data);
+        //     die;
+       
+        if(!isset($request['hub_verify_token'])){
+    
+            $this->username =$request['entry'][0]['changes'][0]["value"]['contacts'][0]['profile']['name'] ?? "there";
+            $this->userphone =$request['entry'][0]['changes'][0]["value"]['contacts'][0]['wa_id'];
 
+            if(isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['text']))
+            {
+                $this->user_message_original = $request['entry'][0]['changes'][0]["value"]['messages'][0]['text']['body'];
+                $this->user_message_lowered  = strtolower($this->user_message_original);
+                $this->message_type = "text";
+            
+            }
 
-        if(isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['text']))
-        {
-            $this->user_message_original = $request['entry'][0]['changes'][0]["value"]['messages'][0]['text']['body'];
-            $this->user_message_lowered  = strtolower($this->user_message_original);
-            $this->message_type = "text";
-        
-        }
-        if(isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['order']))
-        {
-            $this->wa_cart = $request['entry'][0]['changes'][0]["value"]['messages'][0]['order']['product_items'];
-            $this->wa_cart_message = $request['entry'][0]['changes'][0]["value"]['messages'][0]['order']['text'] ?? "None";
-            $this->message_type = "order";
-
-
-        }
-
-        if(isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']))
-        {
-            $interactive_type = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['type'];
-            switch ($interactive_type) {
-                case 'list_reply':
-                    $this->menu_item_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['list_reply']['id'];
-                    $this->message_type = "menu";
-
-                    break;
-
-                case 'button_reply':
-                    $this->button_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['button_reply']['id'];
-                    $this->message_type = "button";
-
-                    break;
-                
-                
-                default:
-                    dd("unknow command");
-                    break;
+            if(isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['image']))
+            {
+                $this->wa_image_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['image']['id'];
+                $this->message_type = "image";
+            
+            }
+            
+    
+            if(isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']))
+            {
+                $interactive_type = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['type'];
+                switch ($interactive_type) {
+                    case 'list_reply':
+                        $this->menu_item_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['list_reply']['id'];
+                        $this->message_type = "menu";
+    
+                        break;
+    
+                    case 'button_reply':
+                        $this->button_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['button_reply']['id'];
+                        $this->message_type = "button";
+    
+                        break;
+                    
+                    
+                    default:
+                        dd("unknow command");
+                        break;
+                }
+               
+    
+    
             }
            
-
+    
+          
 
         }
-       
 
-        // $data = json_encode($request->all());
-        // $file = time() .rand(). '_file.json';
-        // $destinationPath=public_path()."/upload/";
-        // if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
-        // File::put($destinationPath.$file,$data);
-        // die;
+       
         
     }
     public function index(Request $request)
     {
+        if(isset($request['hub_verify_token']))
+        {
+            return $this->verify_bot($request);
+        }
+
         $this->fetch_user();
         switch ($this->message_type) {
             case 'text':
@@ -109,9 +123,8 @@ class BotController extends Controller
             case 'menu':
                 $this->menu_index();
                 break;
-
-            case 'order':
-                $this->add_wa_cart_items();
+            case 'image':
+                $this->image_index();
                 break;
             
             default:
@@ -123,8 +136,14 @@ class BotController extends Controller
     }
 
 
-    public function test()
+    public function test(Request $request)
     {
+        if(isset($request['hub_verify_token']))
+        {
+            return $this->verify_bot($request);
+        }
+
+        $this->send_text_message($this->user_message_original);
         
     }
 
@@ -151,7 +170,22 @@ class BotController extends Controller
         $model->whatsapp_id = $this->userphone;
         $model->save();
         $this->start_new_session();
-        $this->send_first_timer_message();
+        $this->send_greetings_message();
 
     }
+
+    public function verify_bot(Request $input)
+    {
+        if (isset($input['hub_verify_token'])) { ## allows facebook verify that this is the right webhook
+            $token  = env("VERIFY_TOKEN");
+                    if ($input['hub_verify_token'] ===$token) {
+                        return $input['hub_challenge'];
+                        dd();
+                    } else {
+                        echo 'Invalid Verify Token';
+                        dd();
+                    }
+                }
+    }
+
 }
