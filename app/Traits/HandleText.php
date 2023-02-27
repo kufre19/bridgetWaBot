@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use App\Models\Answers;
+use App\Models\Questions;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
 
@@ -12,7 +14,7 @@ use Google\Cloud\Dialogflow\V2\SessionsClient;
 
 trait HandleText
 {
-    use HandleButton, SendMessage,CreateActionsSession;
+    use HandleButton, SendMessage,CreateActionsSession, HandleDialogFlow;
 
     public $text_intent;
 
@@ -21,27 +23,27 @@ trait HandleText
         $this->find_text_intent();
         if ($this->text_intent == "greetings") {
             $this->send_greetings_message($this->userphone);
+        }else{
+            $text_intent = $this->init_dialogFlow_two();
+            $answer = $this->fetch_answer($text_intent);
+            $message_to_send = $this->splitMessage($answer);
+
+            foreach ($message_to_send as $message ) {
+                $data  = $this->make_text_message($message);
+                $this->send_post_curl($data);
+                sleep(3);
+            }
+            die;
         }
-        if ($this->text_intent == "run_action_steps") {
-            $this->continue_session_step();
-        }
+        
         
 
-        
     }
 
     public function show_menu_message()
     {
     }
 
-    public function register_user(array $data)
-    {
-        $model = new User();
-    }
-
-    public function determin_text()
-    {
-    }
 
     public function find_text_intent()
     {
@@ -52,17 +54,35 @@ trait HandleText
       
         if (in_array($message, $greetings)) {
             $this->text_intent = "greetings";
-        } elseif (in_array($message, $menu)) {
+        } else{
             $this->text_intent = "menu";
         }
-         elseif (isset($this->user_session_data['run_action_step'])) {
-            if ($this->user_session_data['run_action_step'] == 1 ) {
-                $this->text_intent = "run_action_steps";
-            }
+         
+    }
+
+    public function fetch_answer($intent)
+    {
+        $question_model = new Questions();
+        $answer_model = new Answers();
+
+        $question = $question_model->where('questions',$intent)->first();
+        $answer = $answer_model->where('question_id',$question->id)->first();
+        return $answer->answers;
+    }
+
+    public function splitMessage($text, $limit = 4096) {
+
+        if (strlen($text) > $limit) {
+            $parts = str_split($text, ceil(strlen($text) / 2));
+            $part1 = $parts[0];
+            $part2 = $parts[1];
+        
+           return [$part1,$part2];
         } else {
-            $this->text_intent = "others";
+            return [$text];
         }
     }
+    
 
 
 

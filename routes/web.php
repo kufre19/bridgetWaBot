@@ -15,5 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     
-    return view('welcome');
+    return view('questions_and_answers.add');
 });
+
+Route::post("questions/store", [\App\Http\Controllers\QuestionsController::class,"store"]);

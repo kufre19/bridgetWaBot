@@ -35,7 +35,7 @@ class BotController extends Controller
     @$menu_item_id holds the id sent back from selecting an item from whatsapp
     @
     
-    
+    e
     */
 
     public function __construct(Request $request)
@@ -109,7 +109,7 @@ class BotController extends Controller
             return $this->verify_bot($request);
         }
 
-        $this->fetch_user();
+        // $this->fetch_user();
         switch ($this->message_type) {
             case 'text':
                 $this->text_index();

@@ -6,9 +6,7 @@ use Google\Cloud\Dialogflow\V2\QueryInput;
 use Google\Cloud\Dialogflow\V2\TextInput;
 use Google\Cloud\Dialogflow\V2\SessionName;
 use Google\Cloud\Dialogflow\V2\SessionsClient;
-
-
-
+use GPBMetadata\Google\Cloud\Dialogflow\V2\Webhook;
 
 trait HandleDialogFlow {
 
@@ -43,7 +41,7 @@ trait HandleDialogFlow {
 
     public function init_dialogFlow_two()
     {
-        putenv("GOOGLE_APPLICATION_CREDENTIALS=".public_path("healthbot-eynv-175558159099.json"));
+        putenv("GOOGLE_APPLICATION_CREDENTIALS=".storage_path("app/credentials/healthbot-eynv-175558159099.json"));
         $this->credentials = json_decode(file_get_contents(env("GOOGLE_APPLICATION_CREDENTIALS"))  ,true);
     
         
@@ -53,7 +51,7 @@ trait HandleDialogFlow {
         $this->url  = "https://dialogflow.googleapis.com/v2/projects/{$this->project_id}/agent/sessions/123456789:detectIntent";
 
         $intentsClient = new IntentsClient();
-        $text = 'explain diabetes';
+        $text = $this->user_message_original;
         $languageCode = "en";
             // new session
         $sessionsClient = new SessionsClient();
@@ -62,6 +60,7 @@ trait HandleDialogFlow {
 
         // query for each string in array
         $textInput = new TextInput();
+        $webhookRequest = new Webhook();
         $textInput->setText($text);
         $textInput->setLanguageCode($languageCode);
 
@@ -75,17 +74,8 @@ trait HandleDialogFlow {
         $queryText = $queryResult->getQueryText();
         $intent = $queryResult->getIntent();
         $displayName = $intent->getDisplayName();
-        $confidence = $queryResult->getIntentDetectionConfidence();
-        $fulfilmentText = $queryResult->getFulfillmentText();
-
-        // output relevant info
-        
-        printf('Detected intent: %s (confidence: %f)' . PHP_EOL, $displayName,
-            $confidence);
-        print(PHP_EOL);
-        printf('Fulfilment text: %s' . PHP_EOL, $fulfilmentText);
-        dd($queryText,$fulfilmentText);
-        return true;
+       
+        return $displayName;
 
     }
 }
