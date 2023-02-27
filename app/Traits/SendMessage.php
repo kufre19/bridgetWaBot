@@ -17,7 +17,7 @@ trait SendMessage
     {
 
         $text = <<<MSG
-        Welcome to Ask HSE Chatbot. Please send your Email & ID for verification.
+        Welcome to Viedial Chatbot. What would you like to know today?.
         MSG;
         $this->makeUserLogin();
         $this->send_post_curl($this->make_text_message($text));
@@ -37,7 +37,7 @@ trait SendMessage
         if ($to == "") {
             $to = $this->userphone;
         }
-        $this->send_post_curl($this->make_text_message($to, $text));
+        $this->send_post_curl($this->make_text_message($text,$to));
         return response("", 200);
     }
 

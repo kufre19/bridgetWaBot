@@ -17,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::any('/bot',[\App\Http\Controllers\BotController::class,'index']);
+
+Route::any('/dialogflow/payload',[\App\Http\Controllers\DialogFlowController::class,'index']);
+Route::any('/dialogflow/test',[\App\Http\Controllers\DialogFlowController::class,'init_dialogFlow_two']);

@@ -5,6 +5,11 @@ namespace App\Traits;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
 
+use Google\ApiCore\ApiException;
+use Google\Cloud\Dialogflow\V2\DetectIntentResponse;
+use Google\Cloud\Dialogflow\V2\QueryInput;
+use Google\Cloud\Dialogflow\V2\SessionsClient;
+
 trait HandleText
 {
     use HandleButton, SendMessage,CreateActionsSession;

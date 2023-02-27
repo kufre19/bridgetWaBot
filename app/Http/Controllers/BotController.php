@@ -144,6 +144,7 @@ class BotController extends Controller
         }
 
         $this->send_text_message($this->user_message_original);
+        die;
         
     }
 
