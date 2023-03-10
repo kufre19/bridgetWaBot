@@ -24,16 +24,38 @@ trait HandleText
         if ($this->text_intent == "greetings") {
             $this->send_greetings_message($this->userphone);
         }else{
-            $text_intent = $this->init_dialogFlow_two();
-            $answer = $this->fetch_answer($text_intent);
-            $message_to_send = $this->splitMessage($answer);
-
-            foreach ($message_to_send as $message ) {
-                $data  = $this->make_text_message($message);
-                $this->send_post_curl($data);
-                sleep(3);
+            $answer = $this->fetch_answer($this->user_message_original);
+            if($answer != "not found")
+            {
+                $message_to_send = $this->splitMessage($answer);
+                foreach ($message_to_send as $message ) {
+                    $data  = $this->make_text_message($message);
+                    $this->send_post_curl($data);
+                    sleep(2);
+                }
+                die;
+                
+            }else{
+                $text_intent = $this->init_dialogFlow_two();
+        
+                $answer = $this->fetch_answer($text_intent);
+                if($answer == "not found")
+                {
+                    $message = "Sorry I'm still learning I do not undertand your question";
+                    $data  = $this->make_text_message($message);
+                    $this->send_post_curl($data);
+                    die;
+                }
+                $message_to_send = $this->splitMessage($answer);
+    
+                foreach ($message_to_send as $message ) {
+                    $data  = $this->make_text_message($message);
+                    $this->send_post_curl($data);
+                    sleep(3);
+                }
+                die;
             }
-            die;
+           
         }
         
         
@@ -66,6 +88,10 @@ trait HandleText
         $answer_model = new Answers();
 
         $question = $question_model->where('questions',$intent)->first();
+        if(!$question)
+        {
+            return "not found";
+        }
         $answer = $answer_model->where('question_id',$question->id)->first();
         return $answer->answers;
     }

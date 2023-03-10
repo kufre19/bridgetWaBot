@@ -52,11 +52,12 @@ trait HandleDialogFlow {
 
         $intentsClient = new IntentsClient();
         $text = $this->user_message_original;
+        // $text = "what is diabetes?";
         $languageCode = "en";
             // new session
         $sessionsClient = new SessionsClient();
         $session = $sessionsClient->sessionName($this->project_id, $sessionId ?: uniqid());
-        printf('Session path: %s' . PHP_EOL, $session);
+        // printf('Session path: %s' . PHP_EOL, $session);
 
         // query for each string in array
         $textInput = new TextInput();
@@ -74,6 +75,7 @@ trait HandleDialogFlow {
         $queryText = $queryResult->getQueryText();
         $intent = $queryResult->getIntent();
         $displayName = $intent->getDisplayName();
+        // dd($displayName);
        
         return $displayName;
 

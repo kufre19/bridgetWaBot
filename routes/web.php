@@ -18,4 +18,8 @@ Route::get('/', function () {
     return view('questions_and_answers.add');
 });
 
+Route::any("test", function(){
+    dd(storage_path("app/credentials/healthbot-eynv-175558159099.json"));
+});
+
 Route::post("questions/store", [\App\Http\Controllers\QuestionsController::class,"store"]);

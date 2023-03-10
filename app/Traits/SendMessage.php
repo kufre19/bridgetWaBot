@@ -19,9 +19,8 @@ trait SendMessage
         $text = <<<MSG
         Welcome to Viedial Chatbot. What would you like to know today?.
         MSG;
-        $this->makeUserLogin();
         $this->send_post_curl($this->make_text_message($text));
-        $this->continue_session_step();
+        die;
     }
 
 
