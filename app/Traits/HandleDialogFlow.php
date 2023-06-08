@@ -39,9 +39,9 @@ trait HandleDialogFlow {
 
     // }
 
-    public function init_dialogFlow_two()
+    public function init_dialogFlow_two($text="does it kill")
     {
-        putenv("GOOGLE_APPLICATION_CREDENTIALS=".storage_path("app/credentials/healthbot-eynv-175558159099.json"));
+        putenv("GOOGLE_APPLICATION_CREDENTIALS=".storage_path("app/credentials/viedialhealth-sqhg-5d8b86e9fa69.json"));
         $this->credentials = json_decode(file_get_contents(env("GOOGLE_APPLICATION_CREDENTIALS"))  ,true);
     
         
@@ -51,7 +51,7 @@ trait HandleDialogFlow {
         $this->url  = "https://dialogflow.googleapis.com/v2/projects/{$this->project_id}/agent/sessions/123456789:detectIntent";
 
         $intentsClient = new IntentsClient();
-        $text = $this->user_message_original;
+        $text = $this->user_message_original ?? $text ;
         // $text = "what is diabetes?";
         $languageCode = "en";
             // new session

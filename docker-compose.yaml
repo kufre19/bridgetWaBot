@@ -2,13 +2,12 @@ version: "3.1"
 services:
   app:
     image: bridgetbot
-    container_name: bridgetbot_php8_0
+    container_name: viedial
     build: 
       context: .
       dockerfile: .
-    restart: always
+    restart: "no"
     ports:
-      - 80:80
       - 8000:8000
     volumes:
       - ./:/var/www/html
@@ -23,19 +22,19 @@ services:
   db:
     image: mysql:latest
     container_name: mysql_db_bridgetbot
-    restart: always
+    restart: "no"
     environment:
       MYSQL_ROOT_PASSWORD: admin
     volumes:
-      - db_data:/docker-entrypoint-initdb.d
-      - db_data:/var/lib/mysql
+      - db_data_bridgetbot:/docker-entrypoint-initdb.d
+      - db_data_bridgetbot:/var/lib/mysql
     networks:
       - bridgetbot
    
   
   phpmyadmin:
     image: phpmyadmin:5.2.0-apache
-    restart: always
+    restart: "no"
     ports:
       - 8080:80
     environment:
@@ -50,4 +49,4 @@ networks:
 
 
 volumes:
-  db_data:
+  db_data_bridgetbot:

@@ -28,7 +28,7 @@ trait CreateActionsSession
                 ["action_type"=>"send_interactive_menu","value"=>"main_menu"],
             ]
         ];
-
+        
         return $this->update_session($session_data);
 
     }

@@ -18,8 +18,12 @@ Route::get('/', function () {
     return view('questions_and_answers.add');
 });
 
-Route::any("test", function(){
-    dd(storage_path("app/credentials/healthbot-eynv-175558159099.json"));
-});
+// Route::any("test", function(){
+//     dd(storage_path("app/credentials/healthbot-eynv-175558159099.json"));
+// });
 
 Route::post("questions/store", [\App\Http\Controllers\QuestionsController::class,"store"]);
+Route::get("list-questions",[\App\Http\Controllers\QuestionsController::class,"list"]);
+Route::get("edit-questions/{id}",[\App\Http\Controllers\QuestionsController::class,"edit"]);
+Route::post("store/edit-questions",[\App\Http\Controllers\QuestionsController::class,"store_edit"]);
+
