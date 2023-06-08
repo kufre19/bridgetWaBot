@@ -14,7 +14,7 @@ use Google\Cloud\Dialogflow\V2\SessionsClient;
 
 trait HandleText
 {
-    use HandleButton, SendMessage,CreateActionsSession, HandleDialogFlow;
+    use HandleButton, SendMessage, CreateActionsSession, HandleDialogFlow;
 
     public $text_intent;
 
@@ -23,52 +23,46 @@ trait HandleText
         $this->find_text_intent();
         if ($this->text_intent == "greetings") {
             $this->send_greetings_message($this->userphone);
-        }else{
+        } else {
+
+            if ($this->user_subscription->status == "not active") {
+                $message = "You don't Seem to have subscribed to this content follow go to (https://www.viedial.ca) to subscribe and get more contents!";
+                $data  = $this->make_text_message($message);
+                $this->send_post_curl($data);
+                $this->ResponsedWith200();
+            }
+           
             $answer = $this->fetch_answer($this->user_message_original);
-            if($answer != "not found")
-            {
+            if ($answer != "not found") {
                 $message_to_send = $this->splitMessage($answer);
-                foreach ($message_to_send as $message ) {
+                foreach ($message_to_send as $message) {
                     $data  = $this->make_text_message($message);
                     $this->send_post_curl($data);
                     sleep(2);
                 }
                 die;
-                
-            }else{
+            } else {
                 $text_intent = $this->init_dialogFlow_two();
-        
+
                 $answer = $this->fetch_answer($text_intent);
 
-                if($answer == "no subscription")
-                {
-                    $message = "You don't Seem to have a subscribe to this content follow this link(https://www.viedial.ca) to subscribe and get more contents!";
-                    $data  = $this->make_text_message($message);
-                    $this->send_post_curl($data);
-                    $this->ResponsedWith200();
-                }
 
-                if($answer == "not found")
-                {
+                if ($answer == "not found") {
                     $message = "Sorry I'm still learning I do not undertand your question";
                     $data  = $this->make_text_message($message);
                     $this->send_post_curl($data);
                     $this->ResponsedWith200();
                 }
                 $message_to_send = $this->splitMessage($answer);
-    
-                foreach ($message_to_send as $message ) {
+
+                foreach ($message_to_send as $message) {
                     $data  = $this->make_text_message($message);
                     $this->send_post_curl($data);
                     sleep(3);
                 }
                 die;
             }
-           
         }
-        
-        
-
     }
 
     public function show_menu_message()
@@ -82,46 +76,43 @@ trait HandleText
 
         $greetings = Config::get("text_intentions.greetings");
         $menu = Config::get("text_intentions.menu");
-      
+
         if (in_array($message, $greetings)) {
             $this->text_intent = "greetings";
-        } else{
+        } else {
             $this->text_intent = "menu";
         }
-         
     }
 
     public function fetch_answer($intent)
     {
         $question_model = new Questions();
         $answer_model = new Answers();
-        if($this->user_subscription->status == "not active")
-        {
-            return "no subscription";
-        }
 
-        $question = $question_model->where('questions',$intent)->first();
-        if(!$question)
-        {
+
+        $question = $question_model->where('questions', $intent)->first();
+        if (!$question) {
+            // means not able to search question in db from user request so must use AI to get intent and question
             return "not found";
         }
-        $answer = $answer_model->where('question_id',$question->id)->first();
+        $answer = $answer_model->where('question_id', $question->id)->first();
         return $answer->answers;
     }
 
-    public function splitMessage($text, $limit = 4096) {
+    public function splitMessage($text, $limit = 4096)
+    {
 
         if (strlen($text) > $limit) {
             $parts = str_split($text, ceil(strlen($text) / 2));
             $part1 = $parts[0];
             $part2 = $parts[1];
-        
-           return [$part1,$part2];
+
+            return [$part1, $part2];
         } else {
             return [$text];
         }
     }
-    
+
 
 
 

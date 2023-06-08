@@ -19,7 +19,6 @@ class Subscription extends Model
         $sub = self::where("user_id",$user_id)->first();
         if($sub)
         {
-          
             return $sub;
         }
       return false ;
