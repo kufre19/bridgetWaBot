@@ -1,0 +1,44 @@
+GET http://0.0.0.0:8000/api/bot
+Content-Type: application/json
+
+
+{
+    "object": "whatsapp_business_account",
+    "entry": [
+
+        {
+            "id": "105048695572773",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "15550485823",
+                            "phone_number_id": "102851835795558"
+                        },
+                        "contacts": [
+                            {
+                                "profile": {
+                                    "name": "Maxwell"
+                                },
+                                "wa_id": "2347016791512"
+                            }
+                        ],
+                        "messages": [
+                            {
+                                "from": "2349057619869",
+                                "id": "wamid.HBgNMjM0NzAxNjc5MTUxMhUCABIYFDNFQjBBMTY3NzEwQTBEQzkzRjgxAA==",
+                                "timestamp": "1663025478",
+                                "text": {
+                                    "body": "2023-05-29"
+                                },
+                                "type": "what is diabetes?"
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}

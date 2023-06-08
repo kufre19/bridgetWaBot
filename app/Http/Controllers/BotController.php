@@ -111,7 +111,7 @@ class BotController extends Controller
             return $this->verify_bot($request);
         }
 
-        // $this->fetch_user();
+        $this->fetch_user();
         switch ($this->message_type) {
             case 'text':
                 $this->text_index();
@@ -177,6 +177,7 @@ class BotController extends Controller
             "user_id"=>$this->userphone
         ]);
         $this->start_new_session();
+        $this->user_subscription = Subscription::getUserSub($this->userphone) ;
         $this->send_greetings_message();
 
     }

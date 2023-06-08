@@ -16,7 +16,13 @@ class Subscription extends Model
 
     public static function getUserSub($user_id)
     {
-      return self::where("user_id",$user_id)->first();
+        $sub = self::where("user_id",$user_id)->first();
+        if($sub)
+        {
+          
+            return $sub;
+        }
+      return false ;
 
     }
 }
