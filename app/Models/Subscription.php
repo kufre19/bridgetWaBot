@@ -8,4 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Subscription extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        "user_id"
+
+    ];
+
+    public static function getUserSub($user_id)
+    {
+      return self::where("user_id",$user_id)->first();
+
+    }
 }

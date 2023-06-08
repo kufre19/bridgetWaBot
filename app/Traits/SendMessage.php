@@ -91,6 +91,13 @@ trait SendMessage
         // curl_close($curl);
 
     }
+
+    public function ResponsedWith200()
+    {
+        http_response_code(200);
+        exit(200);
+    }
+    
     public function send_get_curl_wa_media($media_id = "", $url = "")
     {
         $token = env("WB_TOKEN");

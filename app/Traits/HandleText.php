@@ -39,12 +39,21 @@ trait HandleText
                 $text_intent = $this->init_dialogFlow_two();
         
                 $answer = $this->fetch_answer($text_intent);
+
+                if($answer == "no subscription")
+                {
+                    $message = "You don't Seem to have a subscribe to this content follow this link(https://www.viedial.ca) to subscribe and get more contents!";
+                    $data  = $this->make_text_message($message);
+                    $this->send_post_curl($data);
+                    $this->ResponsedWith200();
+                }
+
                 if($answer == "not found")
                 {
                     $message = "Sorry I'm still learning I do not undertand your question";
                     $data  = $this->make_text_message($message);
                     $this->send_post_curl($data);
-                    die;
+                    $this->ResponsedWith200();
                 }
                 $message_to_send = $this->splitMessage($answer);
     
@@ -86,6 +95,10 @@ trait HandleText
     {
         $question_model = new Questions();
         $answer_model = new Answers();
+        if($this->user_subscription->status == "not active")
+        {
+            return "no subscription";
+        }
 
         $question = $question_model->where('questions',$intent)->first();
         if(!$question)

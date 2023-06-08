@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subscription;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
 use App\Traits\HandleButton;
@@ -30,6 +31,7 @@ class BotController extends Controller
     public $user_session_data;
     public $user_session_status;
     public $wa_image_id;
+    public $user_subscription;
   
     /* 
     @$menu_item_id holds the id sent back from selecting an item from whatsapp
@@ -159,6 +161,7 @@ class BotController extends Controller
            
         }else {
             $this->fetch_user_session();
+            $this->user_subscription = Subscription::getUserSub($this->userphone);
         }
 
     }
@@ -170,6 +173,9 @@ class BotController extends Controller
         $model->name = $this->username;
         $model->whatsapp_id = $this->userphone;
         $model->save();
+        Subscription::create([
+            "user_id"=>$this->userphone
+        ]);
         $this->start_new_session();
         $this->send_greetings_message();
 
