@@ -17,7 +17,10 @@ trait SendMessage
     {
 
         $text = <<<MSG
-        Welcome to Viedial Chatbot. What would you like to know today?.
+        Hello, Thank you for choosing to chat with me today to learn more about diabetes or hypertension. 
+        I am happy to provide you information on what they are, what causes them, how to know if you have any 
+        of them, their complications and how to treat 
+        them with the support of a medical team.  Ask me a question to continue chatting.
         MSG;
         $this->send_post_curl($this->make_text_message($text));
         die;

@@ -25,12 +25,12 @@ trait HandleText
             $this->send_greetings_message($this->userphone);
         } else {
 
-            if ($this->user_subscription->status == "not active") {
-                $message = "You don't Seem to have subscribed to this content follow go to (https://www.viedial.ca) to subscribe and get more contents!";
-                $data  = $this->make_text_message($message);
-                $this->send_post_curl($data);
-                $this->ResponsedWith200();
-            }
+            // if ($this->user_subscription->status == "not active") {
+            //     $message = "You don't Seem to have subscribed to this content follow go to (https://www.viedial.ca) to subscribe and get more contents!";
+            //     $data  = $this->make_text_message($message);
+            //     $this->send_post_curl($data);
+            //     $this->ResponsedWith200();
+            // }
            
             $answer = $this->fetch_answer($this->user_message_original);
             if ($answer != "not found") {
