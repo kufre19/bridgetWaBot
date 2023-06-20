@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BotAbilities\Main;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,9 +19,10 @@ Route::get('/', function () {
     return view('questions_and_answers.add');
 });
 
-// Route::any("test", function(){
-//     dd(storage_path("app/credentials/healthbot-eynv-175558159099.json"));
-// });
+Route::any("test", function(){
+    $main = new Main();
+    return $main->begin_func();
+});
 
 Route::post("questions/store", [\App\Http\Controllers\QuestionsController::class,"store"]);
 Route::get("list-questions",[\App\Http\Controllers\QuestionsController::class,"list"]);

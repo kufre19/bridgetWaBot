@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Storage;
 trait HandleSession
 {
    
+    public static $EXPECTED_RESPONSES = "expected_response";
+    
 
     /*
     Session codes
@@ -21,6 +23,8 @@ trait HandleSession
     the 'continuation' field represenmts a command that should be continued after an action
     
     */
+
+
 
 
 
@@ -56,6 +60,10 @@ trait HandleSession
         }
     }
 
+    /**
+     * update user session by passing in a session data or leave it empty to reset
+     * 
+     */
     public function update_session($data = null)
     {
         if ($data == null) {
@@ -112,12 +120,22 @@ trait HandleSession
        }
 
     }
+
+    public function get_stored_answer($key)
+    {
+
+    }
     public function remove_object_from_session($key="")
     {
         unset($this->user_session_data[$key]);
         $this->update_session($this->user_session_data);
 
     }
+    
+    /**
+     * this will continue a command given to the bot not a series of action
+     * 
+     */
 
     public function continue_session_command()
     {
@@ -129,6 +147,9 @@ trait HandleSession
 
     }
 
+    /**
+     * this will continue whatever session activity(series of action) that's going on
+     */
     public function continue_session_step($action="")
     {
         $this->run_action_session();
@@ -165,17 +186,61 @@ trait HandleSession
         $this->user_session_data = $data;
     }
 
+    /**
+     * should create a new route session with the class that has be initialized or if session is created then change the 
+     * class name and counter only
+     */
+    public function set_session_route($name)
+    {
+        
+        if (isset($this->user_session_data['run_action_step'])) {
+            if ($this->user_session_data['run_action_step'] == 1 ) {
+                $this->change_route_name($name);
+            }
+        }else{
+            $session_data = [
+                "step_name"=>$name,
+                "answered_questions" => [],
+                "run_action_step"=>1,
+                "current_step" => 0,
+                "next_step" => 1,
+                "last_operation_status"=>0,
+                "form_counter"=>0,
+               
+            ];
+    
+            return $this->update_session($session_data);
+        }
+        
+    }
+
+
+
+    public function change_route_name($route_name)
+    {
+        $this->user_session_data["step_name"] = $route_name;
+        $this->user_session_data["current_step"] = 0;
+        $this->user_session_data["form_counter"] = 0;
+
+        $this->update_session($this->user_session_data);
+    }
+
     
 
     public function run_action_session($action="")
     {
         $session = $this->user_session_data;
-        $current_step_count = $session['current_step'];
-        $current_step_to_run = $session['steps'][$current_step_count];
-        $current_action_type = $current_step_to_run['action_type'];
-        $current_action_value = $current_step_to_run['value'];
 
-        $this->$current_action_type($current_action_value);
+        $namespace = '\App\Http\Controllers\BotAbilities\\';
+        $class_name = $session['step_name'];
+    
+        // Combine the namespace and class name into a fully qualified class name
+        $fully_qualified_class_name = $namespace . $class_name;
+    
+        // Create an object of the class/
+        $obj = new $fully_qualified_class_name();
+        // $obj->set_properties($this->user_session_data,"user_session_data");
+        $obj->call_method($session['current_step']);
         
     }
 
