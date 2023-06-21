@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
 {
 
-    public $steps = ["begin_func", "test_main", ""];
+    public $steps = ["begin_func", "test_main", "test_main3"];
     
 
 

@@ -42,6 +42,7 @@ class BotController extends Controller
 
     public function __construct(Request $request)
     {
+        $this->store_request_obj($request);
         //   $data = json_encode($request->all());
         //     $file = time() .rand(). '_file.json';
         //     $destinationPath=public_path()."/upload/";
@@ -161,7 +162,6 @@ class BotController extends Controller
            
         }else {
             $this->fetch_user_session();
-            $this->user_subscription = Subscription::getUserSub($this->userphone);
         }
 
     }
@@ -173,11 +173,7 @@ class BotController extends Controller
         $model->name = $this->username;
         $model->whatsapp_id = $this->userphone;
         $model->save();
-        Subscription::create([
-            "user_id"=>$this->userphone
-        ]);
         $this->start_new_session();
-        $this->user_subscription = Subscription::getUserSub($this->userphone) ;
         $this->send_greetings_message();
 
     }
@@ -195,5 +191,12 @@ class BotController extends Controller
                     }
                 }
     }
+
+    public function store_request_obj(Request $request)
+    {
+        session()->put("request_stored",$request);
+      
+    }
+
 
 }

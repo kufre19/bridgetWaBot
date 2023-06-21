@@ -23,7 +23,7 @@ trait SendMessage
         them with the support of a medical team.  Ask me a question to continue chatting.
         MSG;
         $this->send_post_curl($this->make_text_message($text));
-        die;
+        $this->ResponsedWith200();
     }
 
 

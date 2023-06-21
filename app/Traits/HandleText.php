@@ -2,12 +2,14 @@
 
 namespace App\Traits;
 
-use App\Http\Controllers\BotAbilities\Main;
+// use App\Http\Controllers\BotAbilities\Main;
+
+use App\Http\Controllers\BotAbilities\GetInfo;
 use App\Models\Answers;
 use App\Models\Questions;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
-
+use App\Http\Controllers\BotAbilities\Main;
 use Google\ApiCore\ApiException;
 use Google\Cloud\Dialogflow\V2\DetectIntentResponse;
 use Google\Cloud\Dialogflow\V2\QueryInput;
@@ -25,10 +27,13 @@ trait HandleText
         if ($this->text_intent == "greetings") {
             $this->send_greetings_message($this->userphone);
         } else {
+            
 
-           $main = new Main();
-           $main->begin_func();
+        //    $main = new Main();
+        //    $main->test_main();
            
+        // this code here will first go to db to search for intent/question and pick answer it returns not found if not found in db or 
+        // probably not umderstood then this will repeat again but using dialogflow to get intent/question first
             $answer = $this->fetch_answer($this->user_message_original);
             if ($answer != "not found") {
                 $message_to_send = $this->splitMessage($answer);
@@ -37,7 +42,7 @@ trait HandleText
                     $this->send_post_curl($data);
                     sleep(2);
                 }
-                die;
+                $this->ResponsedWith200();
             } else {
                 $text_intent = $this->init_dialogFlow_two();
 
@@ -57,7 +62,7 @@ trait HandleText
                     $this->send_post_curl($data);
                     sleep(3);
                 }
-                die;
+                $this->ResponsedWith200();
             }
         }
     }
@@ -69,6 +74,7 @@ trait HandleText
 
     public function find_text_intent()
     {
+   
         $message = $this->user_message_lowered;
 
         $greetings = Config::get("text_intentions.greetings");

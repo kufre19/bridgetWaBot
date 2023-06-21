@@ -30,9 +30,9 @@ Content-Type: application/json
                                 "id": "wamid.HBgNMjM0NzAxNjc5MTUxMhUCABIYFDNFQjBBMTY3NzEwQTBEQzkzRjgxAA==",
                                 "timestamp": "1663025478",
                                 "text": {
-                                    "body": "2023-05-29"
+                                    "body": "what is diabetes"
                                 },
-                                "type": "what is diabetes?"
+                                "type": "text"
                             }
                         ]
                     },
