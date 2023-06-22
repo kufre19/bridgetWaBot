@@ -78,7 +78,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
                 break;
         }
 
-        if ($form_counter > 8) {
+        if ($form_counter > 9) {
             $message = "Thank you for taking this great step today. I will send you tips on how to 
             achieve these lifestyle changes.  
             You can keep asking more questions about these risk factors";
