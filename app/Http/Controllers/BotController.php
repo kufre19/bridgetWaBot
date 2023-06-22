@@ -43,6 +43,8 @@ class BotController extends Controller
     public function __construct(Request $request)
     {
         $this->store_request_obj($request);
+
+       
         //   $data = json_encode($request->all());
         //     $file = time() .rand(). '_file.json';
         //     $destinationPath=public_path()."/upload/";
@@ -54,6 +56,8 @@ class BotController extends Controller
     
             $this->username =$request['entry'][0]['changes'][0]["value"]['contacts'][0]['profile']['name'] ?? "there";
             $this->userphone =$request['entry'][0]['changes'][0]["value"]['contacts'][0]['wa_id'];
+
+            // info($request);
 
             if(isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['text']))
             {
@@ -105,6 +109,8 @@ class BotController extends Controller
        
         
     }
+
+    
     public function index(Request $request)
     {
         if(isset($request['hub_verify_token']))
