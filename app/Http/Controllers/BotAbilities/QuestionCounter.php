@@ -61,7 +61,20 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
 
             case '1':
                 // check if user responded with btn yes/no or text y/n if not any of it repeat the last one
-                $this->ResponsedWith200();
+                $user_response = $this->button_id ?? $this->user_message_lowered;
+                if($user_response == "yes")
+                {
+                    info($user_response);
+                    $this->ResponsedWith200();
+
+                } 
+
+                if($user_response == "no")
+                {
+                    info($user_response);
+                    $this->ResponsedWith200();
+
+                } 
                 break;
         }
 
@@ -97,6 +110,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
             $counter = $user_session[self::QS_COUNT];
             if ($counter == 1) {
                 // then start route to ask questions
+
                 $this->begin_func();
             } else {
                 $counter++;
