@@ -80,6 +80,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
                     $data  = $this->make_text_message($message);
                     $this->send_post_curl($data);
                     $repeat_last_action = true;
+                    $this->ResponsedWith200();
                 }
 
                 
