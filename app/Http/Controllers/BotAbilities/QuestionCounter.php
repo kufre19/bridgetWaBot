@@ -151,7 +151,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
         if (isset($user_session[self::QS_COUNT])) {
             // check if it's up to five
             $counter = $user_session[self::QS_COUNT];
-            if ($counter == 5) {
+            if ($counter == 4) {
                 // then start route to ask questions
 
                 $this->begin_func();
