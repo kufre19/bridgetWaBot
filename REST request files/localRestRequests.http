@@ -9,6 +9,7 @@ Content-Type: application/json
         {
             "id": "105048695572773",
             "changes": [
+                
                 {
                     "value": {
                         "messaging_product": "whatsapp",
@@ -30,7 +31,7 @@ Content-Type: application/json
                                 "id": "wamid.HBgNMjM0NzAxNjc5MTUxMhUCABIYFDNFQjBBMTY3NzEwQTBEQzkzRjgxAA==",
                                 "timestamp": "1663025478",
                                 "text": {
-                                    "body": "yes"
+                                    "body": "no"
                                 },
                                 "type": "text"
                             }

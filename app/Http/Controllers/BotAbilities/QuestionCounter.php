@@ -127,7 +127,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
                 break;
         }
 
-        if ($form_counter = 4) {
+        if ($form_counter == 4) {
             $message = <<<MSG
             Thank you for taking this great step today. I will send you tips on how to 
             achieve these lifestyle changes.  
@@ -158,6 +158,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
     }
 
 
+    
     public function checkQsCount()
     {
         // this should fetch user sesssion and check for a qs_count object/key in the session if not found create new one and

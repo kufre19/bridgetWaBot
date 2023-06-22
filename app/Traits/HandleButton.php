@@ -17,6 +17,7 @@ trait HandleButton
             }
         }
     }
+    
 
 
     public function get_command_and_value_button()

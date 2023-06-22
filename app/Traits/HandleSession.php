@@ -226,7 +226,6 @@ trait HandleSession
     }
 
     
-
     public function run_action_session($action="")
     {
         $session = $this->user_session_data;
