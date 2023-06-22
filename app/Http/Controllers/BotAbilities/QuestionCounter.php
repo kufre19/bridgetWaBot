@@ -102,9 +102,17 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
                 $data  = $this->make_text_message($message);
                 $this->send_post_curl($data);
                 break;
+
+            case '4':
+                $message = "Lifestyle changes that keep blood pressure or blood sugar within normal limits involve healthy diets, increased physical activity, weight management, stress management and use of medications. You need all of these to achieve normal readings. 
+                Can I share ideas on how you can achieve these lifestyle changes?";
+                $data  = $this->make_text_message($message);
+                $this->send_post_curl($data);
+                $ask_qs = true;
+                break;
         }
 
-        if ($form_counter = 3) {
+        if ($form_counter = 4) {
             $message = "Thank you for taking this great step today. I will send you tips on how to 
             achieve these lifestyle changes.  
             You can keep asking more questions about these risk factors";
