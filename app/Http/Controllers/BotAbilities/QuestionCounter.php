@@ -62,19 +62,20 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
             case '1':
                 // check if user responded with btn yes/no or text y/n if not any of it repeat the last one
                 $user_response = $this->button_id ?? $this->user_message_lowered;
-                if($user_response == "yes")
-                {
+                if ($user_response == "yes") {
                     info($user_response);
                     $this->ResponsedWith200();
+                }
 
-                } 
+                if ($user_response == "no") {
+                    $message = "Thank you. I understand that you are not ready to plan yet. Will you like to keep learning? 
+                    Share your concerns with me by asking a question.";
 
-                if($user_response == "no")
-                {
-                    info($user_response);
+                    $data  = $this->make_text_message($message);
+                    $this->send_post_curl($data);
+                    $this->update_session();
                     $this->ResponsedWith200();
-
-                } 
+                }
                 break;
         }
 
