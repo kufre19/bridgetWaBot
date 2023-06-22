@@ -48,7 +48,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
                 $this->ResponsedWith200();
             }
         }else{
-            $this->user_session_data[self::QS_COUNT] = 0;
+           $this->add_new_object_to_session(self::QS_COUNT,0);
             $this->ResponsedWith200();
         }
     }
