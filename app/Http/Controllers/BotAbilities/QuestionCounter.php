@@ -13,20 +13,19 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
 
     public $steps = ["checkQsCount", "init_flow", "test_main3"];
     public const QS_COUNT = "qs_count";
-    
+
 
 
     public function begin_func()
     {
         // sets new route to this class
         // and head to another method to ask for approval to begin flow
-       
-       
+
+
     }
 
     public function init_flow()
     {
-
     }
 
 
@@ -36,25 +35,27 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
         // start count from 1
 
         $user_session = $this->user_session_data;
-        if(isset($user_session[self::QS_COUNT]))
-        {
+        if (isset($user_session[self::QS_COUNT])) {
             // check if it's up to five
             $counter = $user_session[self::QS_COUNT];
-            if($counter == 1)
-            {
+            if ($counter == 1) {
                 // then start route to ask questions
                 $text = "start flow";
-                $this->send_post_curl($this->make_text_message($text,$this->userphone));
+                $this->send_post_curl($this->make_text_message($text, $this->userphone));
+                $this->ResponsedWith200();
+            } else {
+                $counter++;
+                $this->add_new_object_to_session(self::QS_COUNT, $counter);
                 $this->ResponsedWith200();
             }
-        }else{
-           $this->add_new_object_to_session(self::QS_COUNT,0);
+        } else {
+            $this->add_new_object_to_session(self::QS_COUNT, 0);
             $this->ResponsedWith200();
         }
     }
 
 
-   
+
 
 
     function call_method($key)
@@ -62,9 +63,4 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
         $method_name = $this->steps[$key];
         $this->$method_name();
     }
-
-   
-
-
-
 }
