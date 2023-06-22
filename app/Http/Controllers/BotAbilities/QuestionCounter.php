@@ -64,8 +64,11 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
                 // check if user responded with btn yes/no or text y/n if not any of it repeat the last one
                 $user_response = $this->button_id ?? $this->user_message_lowered;
                 if ($user_response == "yes") {
-                    info($user_response);
-                    $this->ResponsedWith200();
+                    $message = "Thank you for working with me to beat these risk factors? What concerns do 
+                    you have with your blood sugar or blood pressure readings? ";
+                    $data  = $this->make_text_message($message);
+                    $this->send_post_curl($data);
+                    $ask_qs = true;
                 }
 
                 if ($user_response == "no") {
@@ -84,9 +87,24 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
 
                 
                 break;
+
+            case '2':
+                $message = "I appreciate your bravery to share your concerns with me today. What actions do you want to take 
+                to improve your blood sugar and/or blood pressure readings?";
+                $data  = $this->make_text_message($message);
+                $this->send_post_curl($data);
+                $ask_qs = true;
+                break;
+
+            case '3':
+                $message = "Thank you for choosing to work with me to address your concerns about diabetes or hypertension today. I understand 
+                that you want to make changes to improve your wellbeing.  ";
+                $data  = $this->make_text_message($message);
+                $this->send_post_curl($data);
+                break;
         }
 
-        if ($form_counter > 9) {
+        if ($form_counter = 3) {
             $message = "Thank you for taking this great step today. I will send you tips on how to 
             achieve these lifestyle changes.  
             You can keep asking more questions about these risk factors";
