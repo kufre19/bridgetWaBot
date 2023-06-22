@@ -30,6 +30,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
         $form_counter = $this->user_session_data['form_counter'];
         $ask_qs = false;
         $skip = false;
+        $repeat_last_action = false;
 
         switch ($form_counter) {
             case '0':
@@ -70,12 +71,18 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
                 if ($user_response == "no") {
                     $message = "Thank you. I understand that you are not ready to plan yet. Will you like to keep learning? 
                     Share your concerns with me by asking a question.";
-
                     $data  = $this->make_text_message($message);
                     $this->send_post_curl($data);
                     $this->update_session();
                     $this->ResponsedWith200();
+                }else{
+                    $message = "sorry i did not understand the response please can you repeat that again";
+                    $data  = $this->make_text_message($message);
+                    $this->send_post_curl($data);
+                    $repeat_last_action = true;
                 }
+
+                
                 break;
         }
 
@@ -89,7 +96,14 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
             $this->ResponsedWith200();
         } else {
 
-            $this->go_to_next_step_on_form();
+            if($repeat_last_action)
+            {
+                $this->continue_session_step();
+
+            }else {
+                $this->go_to_next_step_on_form();
+
+            }
 
             if ($ask_qs == true) {
                 $this->ResponsedWith200();
