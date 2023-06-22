@@ -160,6 +160,15 @@ trait GeneralFunctions
         $this->update_session($this->user_session_data);
     }
 
+    public function go_to_previous_step_on_form($value = "")
+    {
+        $session = $this->user_session_data;
+        $current_step_count = $session['form_counter'];
+        $current_step_count -= 1;
+        $this->user_session_data['form_counter'] = $current_step_count;
+        $this->update_session($this->user_session_data);
+    }
+
 
     public function upload_file_from_bot($value = "")
     {
