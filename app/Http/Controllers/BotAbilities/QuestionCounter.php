@@ -74,8 +74,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
                     $this->send_post_curl($data);
                     $ask_qs = true;
                 }
-
-                if ($user_response == "no") {
+                elseif ($user_response == "no") {
                     $message =  <<<MSG
                     Thank you. I understand that you are not ready to plan yet. Will you like to keep learning? 
                     Share your concerns with me by asking a question
@@ -158,7 +157,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
     }
 
 
-    
+
     public function checkQsCount()
     {
         // this should fetch user sesssion and check for a qs_count object/key in the session if not found create new one and
