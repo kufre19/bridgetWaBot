@@ -104,7 +104,8 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
                 break;
 
             case '4':
-                $message = "Lifestyle changes that keep blood pressure or blood sugar within normal limits involve healthy diets, increased physical activity, weight management, stress management and use of medications. You need all of these to achieve normal readings. 
+                $message = "Lifestyle changes that keep blood pressure or blood sugar within normal limits involve healthy diets, increased physical activity, weight management, 
+                stress management and use of medications. You need all of these to achieve normal readings. 
                 Can I share ideas on how you can achieve these lifestyle changes?";
                 $data  = $this->make_text_message($message);
                 $this->send_post_curl($data);
@@ -150,7 +151,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
         if (isset($user_session[self::QS_COUNT])) {
             // check if it's up to five
             $counter = $user_session[self::QS_COUNT];
-            if ($counter == 1) {
+            if ($counter == 5) {
                 // then start route to ask questions
 
                 $this->begin_func();
