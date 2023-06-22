@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInterface
 {
 
-    public $steps = ["checkQsCount", "init_flow", "test_main3"];
+    public $steps = ["checkQsCount", "qsFlow", "test_main3"];
     public const QS_COUNT = "qs_count";
 
 
@@ -20,12 +20,69 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
     {
         // sets new route to this class
         // and head to another method to ask for approval to begin flow
-
-
+        $this->set_session_route("QuestionCounter");
+        $this->go_to_next_step();
+        $this->continue_session_step();
     }
 
-    public function init_flow()
+    public function qsFlow()
     {
+        $form_counter = $this->user_session_data['form_counter'];
+        $ask_qs = false;
+        $skip = false;
+
+        switch ($form_counter) {
+            case '0':
+
+
+                $qs = "Well done! You have improved your knowledge about diabetes or hypertension. 
+                I appreciate your efforts. How do you want to continue your journey to beat diabetes or 
+                hypertension? Can we plan together to beat diabetes or hypertension? ";
+                $header = "Improved your knowledge";
+                $btn = [
+                    [
+                        "type" => "reply",
+                        "reply" => [
+                            "id" => "yes",
+                            "title" => "Yes"
+                        ]
+                    ],
+                    [
+                        "type" => "reply",
+                        "reply" => [
+                            "id" => "no",
+                            "title" => "No"
+                        ]
+                    ],
+                ];
+                $this->message_user_btn($qs, $this->userphone, $header, $btn);
+                $ask_qs = true;
+                break;
+
+            case '1':
+                // check if user responded with btn yes/no or text y/n if not any of it repeat the last one
+                $this->ResponsedWith200();
+                break;
+        }
+
+        if ($form_counter > 8) {
+            $message = "Thank you for taking this great step today. I will send you tips on how to 
+            achieve these lifestyle changes.  
+            You can keep asking more questions about these risk factors";
+            $data  = $this->make_text_message($message);
+            $this->send_post_curl($data);
+            $this->update_session();
+            $this->ResponsedWith200();
+        } else {
+
+            $this->go_to_next_step_on_form();
+
+            if ($ask_qs == true) {
+                $this->ResponsedWith200();
+            } else {
+                $this->continue_session_step();
+            }
+        }
     }
 
 
@@ -40,9 +97,7 @@ class QuestionCounter extends BotFunctionsGeneralFunctions implements AbilityInt
             $counter = $user_session[self::QS_COUNT];
             if ($counter == 1) {
                 // then start route to ask questions
-                $text = "start flow";
-                $this->send_post_curl($this->make_text_message($text, $this->userphone));
-                $this->ResponsedWith200();
+                $this->begin_func();
             } else {
                 $counter++;
                 $this->add_new_object_to_session(self::QS_COUNT, $counter);

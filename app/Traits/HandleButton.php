@@ -11,7 +11,11 @@ trait HandleButton
 
     public function button_index()
     {
-       
+        if (isset($this->user_session_data['run_action_step'])) {
+            if ($this->user_session_data['run_action_step'] == 1) {
+                $this->continue_session_step();
+            }
+        }
     }
 
 

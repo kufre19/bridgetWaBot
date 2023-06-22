@@ -24,12 +24,16 @@ trait HandleText
     public function text_index()
     {
         $this->find_text_intent();
+        if ($this->text_intent == "run_action_steps") {
+            $this->continue_session_step();
+        }
+        
         if ($this->text_intent == "greetings") {
             $this->send_greetings_message($this->userphone);
         } else {
 
-        // this code here will first go to db to search for intent/question and pick answer it returns not found if not found in db or 
-        // probably not umderstood then this will repeat again but using dialogflow to get intent/question first
+            // this code here will first go to db to search for intent/question and pick answer it returns not found if not found in db or 
+            // probably not umderstood then this will repeat again but using dialogflow to get intent/question first
             $answer = $this->fetch_answer($this->user_message_original);
             if ($answer != "not found") {
                 $message_to_send = $this->splitMessage($answer);
@@ -74,7 +78,7 @@ trait HandleText
 
     public function find_text_intent()
     {
-   
+
         $message = $this->user_message_lowered;
 
         $greetings = Config::get("text_intentions.greetings");
@@ -82,6 +86,10 @@ trait HandleText
 
         if (in_array($message, $greetings)) {
             $this->text_intent = "greetings";
+        } elseif (isset($this->user_session_data['run_action_step'])) {
+            if ($this->user_session_data['run_action_step'] == 1) {
+                $this->text_intent = "run_action_steps";
+            }
         } else {
             $this->text_intent = "menu";
         }

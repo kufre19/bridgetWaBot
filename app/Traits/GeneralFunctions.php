@@ -151,27 +151,13 @@ trait GeneralFunctions
         die;
     }
 
-    public function make_incident_report($value = "")
+    public function go_to_next_step_on_form($value = "")
     {
         $session = $this->user_session_data;
-        $answered_question = $session['answered_questions'];
-
-            $incident_description = $answered_question['incident_description'];
-        $incident_location = $answered_question['incident_location'];
-        $other_information = $answered_question['other_information'];
-        $incident_image = $answered_question['incident_image'];
-
-        $data = [
-            ['Incident Description', 'Incident Location', 'Other Information', 'Incident Image'],
-            [$incident_description, $incident_location, $other_information, $incident_image]
-        ];
-
-        $export = new IncidentReportExport($data);
-        $new_name = "reports/".time() .".xlsx";
-         Excel::store($export, $new_name);
-
-        $this->go_to_next_step();
-        $this->continue_session_step();
+        $current_step_count = $session['form_counter'];
+        $current_step_count += 1;
+        $this->user_session_data['form_counter'] = $current_step_count;
+        $this->update_session($this->user_session_data);
     }
 
 

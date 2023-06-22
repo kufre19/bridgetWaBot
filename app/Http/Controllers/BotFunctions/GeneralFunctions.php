@@ -53,6 +53,18 @@ class GeneralFunctions extends BotController {
         $this->send_post_curl($text);
     }
 
+    public function message_user_btn($body,$phone="",$header,$btn)
+    {
+        if($phone=="")
+        {
+            $phone = $this->userphone;
+        }
+
+        $text = $this->make_button_message($phone,$header,$body,$btn);
+        $this->send_post_curl($text);
+    }
+
+
     public function MenuArrayToObj($menu_items_arr)
     {
         $obj = new stdClass();
@@ -62,11 +74,7 @@ class GeneralFunctions extends BotController {
         return $obj;
     }
 
-    public function backToMainMenu()
-    {
-        $main_obj = new Main;
-        $main_obj->begin_func();
-    }
+  
 
 
    
