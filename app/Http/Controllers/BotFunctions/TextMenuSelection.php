@@ -34,15 +34,23 @@ class TextMenuSelection extends GeneralFunctions
              $message = "Please select an option from the menu";
          }
         
-        $text = $this->make_text_message("Please select an option from the menu",$this->userphone);
+        $text = $this->make_text_message($message,$this->userphone);
         $send = $this->send_post_curl($text);
-        print($send);
         $text = $this->make_text_message($this->menu_as_text,$this->userphone);
         $send = $this->send_post_curl($text);
     }
 
+    /**
+     * this method loops through an object mapping 
+     * 1. first the text to each other to make sure if same text is sent it's found in the expeted responses array by pushing
+     * data from the obj menu to the array
+     * 2. then will map that response to the same data
+     * 3. will now push the counter as expected response and then map the counter to the data
+     * 
+     */
     public function make_menu_data()
     {
+      
         foreach ($this->menu_data as $item) {
            
 
@@ -50,7 +58,7 @@ class TextMenuSelection extends GeneralFunctions
             $this->map_response_to_data($item['name'],$item['name']);
             array_push($this->expected_responses,$this->item_menu_counter);
             $this->map_response_to_data($item['name'],$this->item_menu_counter);
-            $this->menu_as_text .="{$this->item_menu_counter }. ". $item['name']. "\n";
+            $this->menu_as_text .="{$this->item_menu_counter }. ". $item['name']. "\n". "\n";
             // should come last
             $this->item_menu_counter++;
 

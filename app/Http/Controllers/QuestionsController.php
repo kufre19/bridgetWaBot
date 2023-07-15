@@ -14,6 +14,7 @@ class QuestionsController extends Controller
     {
         $question = new Questions();
         $question->questions = $request->input('question');
+        $question->category = $request->input('category');
         $question->save();
     
         $answer = new Answers();
@@ -51,11 +52,18 @@ class QuestionsController extends Controller
 
         $question = $request->input('question');
         $answer = $request->input('answer');
+        $category = $request->input('category');
+
         $q_id = $request->input('q_id');
         $a_id = $request->input('a_id');
 
         if (!empty($question)) {
             $question_model->where('id', $q_id)->update(['questions' => $question]);
+        }
+
+
+        if (!empty($category)) {
+            $question_model->where('id', $q_id)->update(['category' => $category]);
         }
 
         if (!empty($answer)) {

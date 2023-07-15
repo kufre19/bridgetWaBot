@@ -53,6 +53,13 @@
                                 <label for="question">Question:</label>
                                 <input type="text" name="question" class="form-control" id="question" placeholder="Enter question">
                             </div>
+                             <div class="form-group">
+                                <label for="cat">Category:</label>
+                                <select name="category" id="cat" class="form-control">
+                                    <option value="hypertension">Hypertention</option>
+                                </select>
+                                
+                            </div>
                             <div class="form-group">
                                 <label for="answer">Answer:</label>
                                 <textarea name="answer" class="form-control" id="exampleTextarea" rows="3" placeholder="Enter answer"></textarea>

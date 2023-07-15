@@ -54,6 +54,16 @@
                                 <input type="text" name="question" value="{{$question->questions}}" class="form-control" id="question" placeholder="Enter question">
                                 <input type="hidden" name="q_id" value="{{$question->id}}">
                             </div>
+
+                            <div class="form-group">
+                                <label for="cat">Category:</label>
+                                <select name="category" id="cat" class="form-control">
+                                    <option value="{{$question->category ?? ""}}" selected>{{$question->category ?? ""}}</option>
+                                    <option value="hypertension">Hypertension</option>
+                                </select>
+                                
+                            </div>
+
                             <div class="form-group">
                                 <label for="answer">Answer:</label>
                                 <textarea name="answer" class="form-control" id="exampleTextarea" rows="3" placeholder="Enter answer">{{$answer->answers}}</textarea>
