@@ -1,4 +1,4 @@
-FROM php:8.1-apache
+ FROM php:8.1-apache
 
 
 RUN apt-get update && apt-get install -y \
@@ -31,4 +31,4 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY . /var/www/html
 
-USER 1000:1000
+USER 1000:1000 
