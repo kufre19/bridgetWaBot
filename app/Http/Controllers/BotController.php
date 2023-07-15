@@ -45,12 +45,12 @@ class BotController extends Controller
         $this->store_request_obj($request);
 
        
-        //   $data = json_encode($request->all());
-        //     $file = time() .rand(). '_file.json';
-        //     $destinationPath=public_path()."/upload/";
-        //     if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
-        //     File::put($destinationPath.$file,$data);
-        //     die;
+          $data = json_encode($request->all());
+            $file = time() .rand(). '_file.json';
+            $destinationPath=public_path()."/upload/";
+            if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
+            File::put($destinationPath.$file,$data);
+            die;
        
         if(!isset($request['hub_verify_token'])){
     
