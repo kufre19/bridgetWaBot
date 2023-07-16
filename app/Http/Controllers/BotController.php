@@ -32,6 +32,7 @@ class BotController extends Controller
     public $user_session_status;
     public $wa_image_id;
     public $user_subscription;
+    public $wa_phone_id;
   
     /* 
     @$menu_item_id holds the id sent back from selecting an item from whatsapp
@@ -45,17 +46,19 @@ class BotController extends Controller
         $this->store_request_obj($request);
 
        
-          $data = json_encode($request->all());
-            $file = time() .rand(). '_file.json';
-            $destinationPath=public_path()."/upload/";
-            if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
-            File::put($destinationPath.$file,$data);
-            die;
+        //   $data = json_encode($request->all());
+        //     $file = time() .rand(). '_file.json';
+        //     $destinationPath=public_path()."/upload/";
+        //     if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
+        //     File::put($destinationPath.$file,$data);
+        //     die;
        
         if(!isset($request['hub_verify_token'])){
     
             $this->username =$request['entry'][0]['changes'][0]["value"]['contacts'][0]['profile']['name'] ?? "there";
             $this->userphone =$request['entry'][0]['changes'][0]["value"]['contacts'][0]['wa_id'];
+            $this->wa_phone_id =$request['entry'][0]['changes'][0]["value"]['metadata']["phone_number_id"];
+
 
             // info($request);
 

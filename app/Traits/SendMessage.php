@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -64,12 +65,26 @@ trait SendMessage
         return true;
     }
 
+    public function get_meta_app_cred($wa_phone_id)
+    {
+        $wa_config = Config::get("whatsapp_config");
+        $app_config = $wa_config[$wa_phone_id];
+
+        $app_config['url'] = "https://graph.facebook.com/{$app_config['version']}/{$wa_phone_id}/messages";
+
+        return $app_config;
+    }
 
 
     public function send_post_curl($post_data)
     {
-        $token = env("WB_TOKEN");
-        $url = env("WB_MESSAGE_URL");
+        $app_config = $this->get_meta_app_cred($this->wa_phone_id);
+        $token = $app_config['token'];
+        $url = $app_config['url'];
+        
+        // $token = env("WB_TOKEN");
+        // $url = env("WB_MESSAGE_URL");
+       
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
