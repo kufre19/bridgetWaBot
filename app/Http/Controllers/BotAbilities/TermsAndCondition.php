@@ -5,6 +5,7 @@ namespace App\Http\Controllers\BotAbilities;
 use App\Http\Controllers\BotFunctions\GeneralFunctions ;
 use App\Http\Controllers\BotFunctions\TextMenuSelection;
 use App\Models\ScheduleMenu;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 
@@ -54,15 +55,31 @@ class TermsAndCondition extends GeneralFunctions implements AbilityInterface
 
         if($response == "1" || $response =="Accept"){
             // update user accepted_term field and go back to main ability
+            $this->update_Wa_user_terms();
+            $main = new Main;
+            $main->begin_func();
+
 
         }
 
         if($response == "2" || $response =="Decline"){
             // clear session and end 
+            $this->update_session();
+            $this->ResponsedWith200();
             
         }
 
     }
+
+    public function update_Wa_user_terms()
+    {
+        $usermodel = new User();
+        $user = $usermodel->where('whatsapp_id',$this->userphone)->update([
+            "accepted_terms"=>"accepted"
+        ]);
+
+    }
+
 
 
 
