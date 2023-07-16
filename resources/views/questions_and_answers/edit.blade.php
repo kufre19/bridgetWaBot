@@ -63,6 +63,21 @@
                                 </select>
                                 
                             </div>
+                            <div class="form-group">
+                                <label for="sub_cat">sub Category:</label>
+                                <select name="sub_category" id="sub_cat" class="form-control">
+                                    <option value="{{$question->sub_category ?? ""}}" selected>{{$question->sub_category ?? ""}}</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+
+                                </select>
+                                
+                            </div>
 
                             <div class="form-group">
                                 <label for="answer">Answer:</label>

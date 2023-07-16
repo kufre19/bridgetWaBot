@@ -4,6 +4,7 @@ namespace App\Http\Controllers\BotAbilities;
 
 use App\Http\Controllers\BotFunctions\GeneralFunctions as BotFunctionsGeneralFunctions;
 use App\Http\Controllers\BotFunctions\TextMenuSelection;
+use App\Models\Questions;
 use App\Models\ScheduleMenu;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -12,8 +13,9 @@ use Illuminate\Http\Request;
 class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
 {
 
-    public $steps = ["begin_func", "", ""];
+    public $steps = ["begin_func", "makeQuestionList", ""];
     public $accepted_terms;
+    public $question_arr_list = [];
 
 
 
@@ -29,9 +31,8 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         {
             // send intro and list of questions
             $this->set_session_route("Main");
-            $this->intro_statement();
-            // $this->go_to_next_step();
-            $this->ResponsedWith200();
+            $this->go_to_next_step();
+            $this->continue_session_step();
         }else{
             $terms_andcondition = new TermsAndCondition();
             $terms_andcondition->begin_func();
@@ -41,6 +42,20 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
 
       
         
+    }
+
+    public function makeQuestionList()
+    {
+        $question_model = new Questions();
+        $questions = $question_model->where("category",$this->app_config_cred['category'])->get();
+
+
+        foreach ($questions as $key => $question) {
+            array_push($this->question_arr_list,$question->questions);
+
+        }
+
+
     }
 
     public function splitMessage($text, $limit = 4096)
