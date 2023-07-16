@@ -188,7 +188,7 @@ class BotController extends Controller
         $model->whatsapp_id = $this->userphone;
         $model->save();
         $this->start_new_session();
-        $this->send_greetings_message();
+        // $this->send_greetings_message();
 
     }
 

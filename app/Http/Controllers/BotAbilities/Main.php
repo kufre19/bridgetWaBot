@@ -23,6 +23,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         // if accepeted send intro message and then question
         // else should send the privacy policy question
         // sets new route to this class
+        $this->get_Wa_user();
 
         if($this->accepted_terms == "accepted")
         {
@@ -63,6 +64,8 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         $user = $usermodel->where('whatsapp_id',$this->userphone)->first();
 
         $this->accepted_terms = $user->accepted_terms;
+
+       
         
 
     }

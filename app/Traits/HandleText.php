@@ -30,7 +30,12 @@ trait HandleText
         }
         
         if ($this->text_intent == "greetings") {
+           
             $this->send_greetings_message($this->userphone);
+
+              // this will lead always to the main ability
+              $main = new Main;
+              $main->begin_func();
         } else {
 
             // this will lead always to the main ability
@@ -40,11 +45,7 @@ trait HandleText
         }
     }
 
-    public function show_menu_message()
-    {
-    }
-
-
+   
     public function find_text_intent()
     {
 

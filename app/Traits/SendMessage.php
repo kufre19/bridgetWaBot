@@ -23,7 +23,7 @@ trait SendMessage
         it with the support of a medical team.
         MSG;
         $this->send_post_curl($this->make_text_message($text));
-        $this->ResponsedWith200();
+        
     }
 
 

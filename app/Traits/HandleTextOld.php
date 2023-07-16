@@ -29,6 +29,7 @@ trait HandleTextOld
         }
         
         if ($this->text_intent == "greetings") {
+        
             $this->send_greetings_message($this->userphone);
         } else {
 
