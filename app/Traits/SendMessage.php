@@ -79,7 +79,7 @@ trait SendMessage
     public function send_post_curl($post_data)
     {
         $app_config = $this->get_meta_app_cred($this->wa_phone_id);
-        $token = $app_config['token'];
+        $token = env($this->wa_phone_id);
         $url = $app_config['url'];
         
         // $token = env("WB_TOKEN");
