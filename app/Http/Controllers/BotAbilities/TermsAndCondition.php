@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class TermsAndCondition extends GeneralFunctions implements AbilityInterface
 {
 
-    public $steps = ["begin_func", "privacy_policy", ""];
+    public $steps = ["begin_func", "privacy_policy", "checkTermsSelection"];
     public $accepted = ['Accept','Decline'];
    
 
@@ -41,6 +41,8 @@ class TermsAndCondition extends GeneralFunctions implements AbilityInterface
         $menu_obj = $this->MenuArrayToObj($this->accepted);
         $menu_txt = new TextMenuSelection($menu_obj);
         $menu_txt->send_menu_to_user($text);
+        $this->go_to_next_step();
+        $this->ResponsedWith200();
        
     }
 
