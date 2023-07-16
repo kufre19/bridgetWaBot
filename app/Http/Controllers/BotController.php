@@ -15,6 +15,7 @@ use App\Traits\MessagesType;
 use App\Traits\SendMessage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 class BotController extends Controller
 {
@@ -33,6 +34,8 @@ class BotController extends Controller
     public $wa_image_id;
     public $user_subscription;
     public $wa_phone_id;
+    public $app_config_cred;
+    
   
     /* 
     @$menu_item_id holds the id sent back from selecting an item from whatsapp
@@ -121,6 +124,8 @@ class BotController extends Controller
             return $this->verify_bot($request);
         }
 
+        $this->app_config_cred = $this->get_meta_app_cred($this->wa_phone_id);
+
         $this->fetch_user();
         switch ($this->message_type) {
             case 'text':
@@ -186,6 +191,17 @@ class BotController extends Controller
         $this->send_greetings_message();
 
     }
+
+    public function get_meta_app_cred($wa_phone_id)
+    {
+        $wa_config = Config::get("whatsapp_config");
+        $app_config = $wa_config[$wa_phone_id];
+
+        $app_config['url'] = "https://graph.facebook.com/{$app_config['version']}/{$wa_phone_id}/messages";
+
+        return $app_config;
+    }
+
 
     public function verify_bot(Request $input)
     {

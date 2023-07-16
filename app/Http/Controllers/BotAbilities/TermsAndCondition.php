@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Http\Controllers\BotAbilities;
+
+use App\Http\Controllers\BotFunctions\GeneralFunctions ;
+use App\Http\Controllers\BotFunctions\TextMenuSelection;
+use App\Models\ScheduleMenu;
+use Illuminate\Http\Request;
+
+
+class TermsAndCondition extends GeneralFunctions implements AbilityInterface
+{
+
+    public $steps = ["begin_func", "privacy_policy", ""];
+    public $accepted = ['Accept','Decline'];
+   
+
+
+
+    public function begin_func()
+    {
+        // sets new route to this class
+      
+        $this->set_session_route("TermsAndCondition");
+        $this->go_to_next_step();
+        $this->continue_session_step();
+    }
+
+   
+
+    public function privacy_policy()
+    {
+        $text = <<<MSG
+        Before you proceed, you will need to read and accept our terms of use and privacy policy. 
+
+        We will not ask you to share any sensitive information concerning your health or other aspect of your life. All you need to do is to ask questions about hypertension and we will provide accurate and factual answers. 
+        This service does not replace the recommendations of your doctor. We provide education that will help you interact with your doctor better and also practice the recommendations that the doctor has provided. 
+        MSG;
+        
+        $menu_obj = $this->MenuArrayToObj($this->accepted);
+        $menu_txt = new TextMenuSelection($menu_obj);
+        $menu_txt->send_menu_to_user($text);
+       
+    }
+
+    public function checkTermsSelection()
+    {
+        // this should check what user selected and end if decline else go back to Main Ability
+        $response= $this->user_message_original;
+        $menu_obj = $this->MenuArrayToObj($this->accepted);
+        $menu_txt = new TextMenuSelection($menu_obj);
+
+        $menu_txt->check_expected_response($response);
+
+        if($response == "1" || $response =="Accept"){
+            // update user accepted_term field and go back to main ability
+
+        }
+
+        if($response == "2" || $response =="Decline"){
+            // clear session and end 
+            
+        }
+
+    }
+
+
+
+    function call_method($key)
+    {
+        $method_name = $this->steps[$key];
+        $this->$method_name();
+    }
+}

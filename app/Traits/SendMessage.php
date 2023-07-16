@@ -18,10 +18,9 @@ trait SendMessage
     {
 
         $text = <<<MSG
-        Hello, Thank you for choosing to chat with me today to learn more about diabetes or hypertension. 
-        I am happy to provide you information on what they are, what causes them, how to know if you have any 
-        of them, their complications and how to treat 
-        them with the support of a medical team.  Ask me a question to continue chatting.
+        Hello, Thank you for choosing to chat with me today to learn more about {$this->app_config_cred['category']}. 
+        I am happy to provide you information on what they are, what causes it, how to know if you have it, their complications and how to treat 
+        it with the support of a medical team.
         MSG;
         $this->send_post_curl($this->make_text_message($text));
         $this->ResponsedWith200();
@@ -30,7 +29,13 @@ trait SendMessage
 
 
 
-
+    public function intro_statement()
+    {
+        $text = <<<MSG
+        We will first start by learning what blood pressure and hypertension  and the causes of hypertension. To GET ACCURATE ANSWERS, type in the questions below exactly as they appear below. 
+        MSG;
+        $this->send_post_curl($this->make_text_message($text));
+    }
 
 
 
@@ -65,16 +70,7 @@ trait SendMessage
         return true;
     }
 
-    public function get_meta_app_cred($wa_phone_id)
-    {
-        $wa_config = Config::get("whatsapp_config");
-        $app_config = $wa_config[$wa_phone_id];
-
-        $app_config['url'] = "https://graph.facebook.com/{$app_config['version']}/{$wa_phone_id}/messages";
-
-        return $app_config;
-    }
-
+  
 
     public function send_post_curl($post_data)
     {

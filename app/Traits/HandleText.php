@@ -5,6 +5,7 @@ namespace App\Traits;
 // use App\Http\Controllers\BotAbilities\Main;
 
 use App\Http\Controllers\BotAbilities\GetInfo;
+use App\Http\Controllers\BotAbilities\Main;
 use App\Models\Answers;
 use App\Models\Questions;
 use App\Models\User;
@@ -32,42 +33,10 @@ trait HandleText
             $this->send_greetings_message($this->userphone);
         } else {
 
-            // this code here will first go to db to search for intent/question and pick answer it returns not found if not found in db or 
-            // probably not umderstood then this will repeat again but using dialogflow to get intent/question first
-            $answer = $this->fetch_answer($this->user_message_original);
-            if ($answer != "not found") {
-                $message_to_send = $this->splitMessage($answer);
-                foreach ($message_to_send as $message) {
-                    $data  = $this->make_text_message($message);
-                    $this->send_post_curl($data);
-                    sleep(2);
-                }
-                $main = new QuestionCounter();
-                $main->checkQsCount();
-                $this->ResponsedWith200();
-            } else {
-                $text_intent = $this->init_dialogFlow_two();
-
-                $answer = $this->fetch_answer($text_intent);
-
-
-                if ($answer == "not found") {
-                    $message = "Sorry I'm still learning I do not undertand your question";
-                    $data  = $this->make_text_message($message);
-                    $this->send_post_curl($data);
-                    $this->ResponsedWith200();
-                }
-                $message_to_send = $this->splitMessage($answer);
-
-                foreach ($message_to_send as $message) {
-                    $data  = $this->make_text_message($message);
-                    $this->send_post_curl($data);
-                    sleep(3);
-                }
-                $main = new QuestionCounter();
-                $main->checkQsCount();
-                $this->ResponsedWith200();
-            }
+            // this will lead always to the main ability
+            $main = new Main;
+            $main->begin_func();
+         
         }
     }
 
@@ -110,20 +79,7 @@ trait HandleText
         return $answer->answers;
     }
 
-    public function splitMessage($text, $limit = 4096)
-    {
-
-        if (strlen($text) > $limit) {
-            $parts = str_split($text, ceil(strlen($text) / 2));
-            $part1 = $parts[0];
-            $part2 = $parts[1];
-
-            return [$part1, $part2];
-        } else {
-            return [$text];
-        }
-    }
-
+   
 
 
 
