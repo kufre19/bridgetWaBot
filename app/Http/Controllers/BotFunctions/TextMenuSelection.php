@@ -14,10 +14,14 @@ class TextMenuSelection extends GeneralFunctions
     public $menu_data;
     public $menu_as_text;
     public $item_menu_counter = 1;
+    public $extra_data ;
 
-    public function __construct(mixed $menu_data)
+
+
+    public function __construct(mixed $menu_data,$extra_data='')
     {
         parent::__construct();
+        $this->extra_data = $extra_data;
 
         $this->menu_data = $menu_data;
         $this->make_menu_data();
