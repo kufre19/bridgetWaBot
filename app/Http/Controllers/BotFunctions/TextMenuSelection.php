@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\BotFunctions;
 
+use App\Models\Questions;
 use App\Traits\MessagesType;
 use App\Traits\SendMessage;
+use Illuminate\Support\Facades\Config;
 
 class TextMenuSelection extends GeneralFunctions
 {
@@ -79,7 +81,7 @@ class TextMenuSelection extends GeneralFunctions
     public function check_expected_response($response)
     {
         if (!in_array($response, $this->expected_responses)) {
-            info($response);
+            
             $message = "Please select from the menu given!";
             $this->send_menu_to_user($message);
             return $this->ResponsedWith200();
@@ -93,4 +95,41 @@ class TextMenuSelection extends GeneralFunctions
         $selected_item = $this->mapped_responses[$response];
         return $selected_item;
     }
+
+    public function multiple_menu_message(Questions $questions)
+    {
+        // $menu_messages = [["message","menu text"]...];
+        // 
+        $menu_messages = [];
+        $intro_mesasges = Config::get("intro_messages");
+        $specific_intro_messages = $intro_mesasges[$this->app_config_cred["category"]];
+        // loop through the sub categories array to get keys and intro messages keys are to be used for also checking what sub cat a question
+        // belongs to before creatin an array of intro message key pair and also with the menu text 
+        foreach ($specific_intro_messages as $sub_category => $intro_message) {
+            $menu_txt = "";
+            foreach ($questions as $key => $value) {
+                if($value->sub_category == $sub_category){
+                    $menu_txt  .="{$this->item_menu_counter }. " .  $value->question  . "\n". "\n";
+                    $this->item_menu_counter++;
+                    
+                }
+                array_push($menu_messages,["message"=>$intro_message,"menu_text"=>$menu_txt]);
+
+            }
+           
+        }
+
+        // loop through the menu message to display the messages 
+        foreach ($menu_messages as $key => $value) {
+            $text = $this->make_text_message($value['message'],$this->userphone);
+            $send = $this->send_post_curl($text);
+            $text = $this->make_text_message($value['menu_text'],$this->userphone);
+            $send = $this->send_post_curl($text);
+        }
+
+
+
+    }
+
+
 }

@@ -50,10 +50,53 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         $questions = $question_model->where("category",$this->app_config_cred['category'])->get();
 
 
-        foreach ($questions as $key => $question) {
-            array_push($this->question_arr_list,$question->questions);
+        $question_Arr = [];
+        foreach ($questions as $key => $value) {
+            if($value->category == $this->app_config_cred['category'])
+            {
+                array_push($question_Arr,$value->questions);
 
+            }
         }
+        $question_obj = $this->MenuArrayToObj($question_Arr);
+        $text_menu = new TextMenuSelection($$question_obj);
+        $text_menu->multiple_menu_message($questions);
+        $this->go_to_next_step();
+
+        $this->ResponsedWith200();
+
+    }
+
+
+    public function checkSelection(){
+        $question_model = new Questions();
+        $questions = $question_model->where("category",$this->app_config_cred['category'])->get();
+
+
+        $question_Arr = [];
+        foreach ($questions as $key => $value) {
+            if($value->category == $this->app_config_cred['category'])
+            {
+                array_push($question_Arr,$value->questions);
+
+            }
+        }
+        $question_obj = $this->MenuArrayToObj($question_Arr);
+        $text_menu = new TextMenuSelection($$question_obj);
+        $text_menu = new TextMenuSelection($question_Arr);
+        $check = $text_menu->check_expected_response($this->user_message_original);
+
+        if($check)
+        {
+            $text = $this->make_text_message("selection recognized",$this->userphone);
+            $send = $this->send_post_curl($text);
+            $this->ResponsedWith200();
+        }else{
+            $text = $this->make_text_message("selection not recognized",$this->userphone);
+            $send = $this->send_post_curl($text);
+            $this->ResponsedWith200();
+        }
+
 
 
     }

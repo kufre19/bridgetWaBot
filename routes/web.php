@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\BotAbilities\Main;
+use App\Models\Questions;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,8 +22,41 @@ Route::get('/', function () {
 });
 
 Route::any("test", function(){
-    $main = new Main();
-    return $main->begin_func();
+    $counter = 1;
+    // $menu_messages = [["message","menu text"]...];
+        // 
+        $menu_messages = [];
+        $intro_mesasges = Config::get("intro_messages");
+        $specific_intro_messages = $intro_mesasges["hypertension"];
+        // loop through the sub categories to get keys and intro messages keys are to be used for also checking what sub cat a question
+        // belongs to
+        foreach ($specific_intro_messages as $sub_category => $intro_message) {
+          
+
+            
+            $question_model = new Questions();
+            $questions = $question_model->get();
+           
+            
+
+          
+            $menu_txt = "";
+            foreach ($questions as $key => $value) {
+                if($value->sub_category == $sub_category){
+                    $menu_txt  .="{$counter }. " .  $value->questions  . "\n". "\n";
+                    $counter++;
+
+                    
+                   
+                }
+                array_push($menu_messages,["message"=>$intro_message,"menu_text"=>$menu_txt]);
+                dd($menu_messages);
+               
+           
+
+            }
+           
+        }
 });
 
 Route::post("questions/store", [\App\Http\Controllers\QuestionsController::class,"store"]);
