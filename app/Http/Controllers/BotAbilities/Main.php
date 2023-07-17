@@ -4,6 +4,7 @@ namespace App\Http\Controllers\BotAbilities;
 
 use App\Http\Controllers\BotFunctions\GeneralFunctions as BotFunctionsGeneralFunctions;
 use App\Http\Controllers\BotFunctions\TextMenuSelection;
+use App\Models\Answers;
 use App\Models\Questions;
 use App\Models\ScheduleMenu;
 use App\Models\User;
@@ -85,19 +86,23 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         }
         $question_obj = $this->MenuArrayToObj($question_Arr);
         $text_menu = new TextMenuSelection($question_obj);
-        $check = $text_menu->check_selection_from_multiple_menu_message($this->user_message_original);
+        $question_selected = $text_menu->check_selection_from_multiple_menu_message($this->user_message_original);
 
-        if($check)
-        {
-            $text = $this->make_text_message("selection recognized {$check}",$this->userphone);
+        $question_model = new Questions();
+        $question = $question_model->where("questions",$question_selected)->first();
+
+        $answer_model = new Answers();
+        $answer = $question_model->where("question_id",$question->id)->first();
+        
+       
+        $response = $this->splitMessage( $answer->answer);
+        foreach ($response as $key => $message) {
+            $text = $this->make_text_message($message, $this->userphone);
             $send = $this->send_post_curl($text);
-            $this->ResponsedWith200();
-        }else{
-            $text = $this->make_text_message("selection not recognized",$this->userphone);
-            $send = $this->send_post_curl($text);
-            $this->ResponsedWith200();
         }
 
+        $this->ResponsedWith200();
+       
 
 
     }
