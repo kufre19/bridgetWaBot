@@ -84,8 +84,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
             }
         }
         $question_obj = $this->MenuArrayToObj($question_Arr);
-        $text_menu = new TextMenuSelection($$question_obj);
-        $text_menu = new TextMenuSelection($question_Arr);
+        $text_menu = new TextMenuSelection($question_obj);
         $check = $text_menu->check_expected_response($this->user_message_original);
 
         if($check)
