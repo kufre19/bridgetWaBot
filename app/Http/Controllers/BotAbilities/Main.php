@@ -62,7 +62,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         }
         $question_obj = $this->MenuArrayToObj($question_Arr);
         $text_menu = new TextMenuSelection($question_obj);
-        $text_menu->multiple_menu_message($questions);
+        $text_menu->multiple_menu_message();
         $this->go_to_next_step();
 
         $this->ResponsedWith200();
