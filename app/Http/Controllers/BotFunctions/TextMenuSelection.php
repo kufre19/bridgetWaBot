@@ -127,4 +127,49 @@ class TextMenuSelection extends GeneralFunctions
             $send = $this->send_post_curl($text);
         }
     }
+
+    public function check_selection_from_multiple_menu_message($response)
+    {
+        // $menu_messages = [["message","menu text"]...];
+        // 
+        $question_model = new Questions();
+        $menu_messages = [];
+        $intro_mesasges = Config::get("intro_messages");
+        $this->item_menu_counter = 1;
+        $specific_intro_messages = $intro_mesasges[$this->app_config_cred["category"]];
+      /**
+       * create an array from the list of questions that are correctly matched only with their category and sub cat  ID
+       * then use the array to create an object that will be used to create a new object of this class then used to create expexted responses
+       * that would be checked and responded to accordingly 
+       */
+        foreach ($specific_intro_messages as $sub_category_id => $intro_message) {                                                                           
+            $questions = $question_model->where("category", $this->app_config_cred['category'])
+            ->where("sub_category",$sub_category_id)->get();
+
+            if($questions->count() > 0)
+            {
+                foreach ($questions as $question => $value) {
+                    array_push($menu_messages, $value->questions);                   
+                }
+            }
+            
+        }
+
+        $array_to_obj = $this->MenuArrayToObj($menu_messages);
+        $new_obj = new TextMenuSelection($array_to_obj);
+        $new_obj->make_menu_data();
+        if (!in_array($response, $this->expected_responses))
+        {
+            $message = "Please select an option from the menu";
+            $text = $this->make_text_message($message, $this->userphone);
+            $send = $this->send_post_curl($text);
+
+            $this->multiple_menu_message();
+            $this->ResponsedWith200();
+        }
+
+        return true;
+
+        
+    }
 }
