@@ -95,7 +95,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         $answer = $question_model->where("question_id",$question->id)->first();
         
        
-        $response = $this->splitMessage( $answer->answer);
+        $response = $this->splitMessage( $answer->answers);
         foreach ($response as $key => $message) {
             $text = $this->make_text_message($message, $this->userphone);
             $send = $this->send_post_curl($text);
