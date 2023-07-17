@@ -85,11 +85,11 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         }
         $question_obj = $this->MenuArrayToObj($question_Arr);
         $text_menu = new TextMenuSelection($question_obj);
-        $check = $text_menu->check_expected_response($this->user_message_original);
+        $check = $text_menu->check_selection_from_multiple_menu_message($this->user_message_original);
 
         if($check)
         {
-            $text = $this->make_text_message("selection recognized",$this->userphone);
+            $text = $this->make_text_message("selection recognized {$check}",$this->userphone);
             $send = $this->send_post_curl($text);
             $this->ResponsedWith200();
         }else{

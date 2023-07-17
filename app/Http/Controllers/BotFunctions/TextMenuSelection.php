@@ -168,8 +168,8 @@ class TextMenuSelection extends GeneralFunctions
             $this->ResponsedWith200();
         }
 
-        return true;
 
+       return $new_obj->get_selected_item($response);
         
     }
 }
