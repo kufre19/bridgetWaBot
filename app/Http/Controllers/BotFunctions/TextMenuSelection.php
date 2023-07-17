@@ -108,7 +108,7 @@ class TextMenuSelection extends GeneralFunctions
             $questions = $question_model->where("category", $this->app_config_cred['category'])
             ->where("sub_category",$sub_category_id)->get();
 
-            if($questions)
+            if($questions->count() > 0)
             {
                 foreach ($questions as $question => $value) {
                     $menu_txt  .= "{$this->item_menu_counter}. " .  $value->questions  . "\n" . "\n";
