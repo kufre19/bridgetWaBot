@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
 {
 
-    public $steps = ["begin_func", "makeQuestionList", ""];
+    public $steps = ["begin_func", "makeQuestionList", "checkSelection"];
     public $accepted_terms;
     public $question_arr_list = [];
 
