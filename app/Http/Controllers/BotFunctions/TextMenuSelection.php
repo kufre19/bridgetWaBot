@@ -112,9 +112,8 @@ class TextMenuSelection extends GeneralFunctions
                 foreach ($questions as $question => $value) {
                     $menu_txt  .= "{$this->item_menu_counter}. " .  $value->questions  . "\n" . "\n";
                     $this->item_menu_counter++;
-                    array_push($menu_messages, ["message" => $intro_message, "menu_text" => $menu_txt]);
                 }
-               
+                array_push($menu_messages, ["message" => $intro_message, "menu_text" => $menu_txt]);
             }
             
         }
