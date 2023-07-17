@@ -104,7 +104,7 @@ class TextMenuSelection extends GeneralFunctions
         // belongs to before creatin an array of intro message key pair and also with the menu text 
         foreach ($specific_intro_messages as $sub_category_id => $intro_message) {
             $menu_txt = "";                                                                                
-            $questions = $question_model->where("category", $this->app_config_cred['                                                                                                                           category'])
+            $questions = $question_model->where("category", $this->app_config_cred['category'])
             ->where("sub_category",$sub_category_id)->get();
 
             if($questions)
