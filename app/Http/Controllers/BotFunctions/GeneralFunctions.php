@@ -5,6 +5,7 @@ use App\Http\Controllers\BotAbilities\Main;
 use App\Http\Controllers\BotController;
 use App\Models\WaUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use stdClass;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
@@ -30,6 +31,8 @@ class GeneralFunctions extends BotController {
         
         parent::__construct(session()->get("request_stored"));
         $this->fetch_user_session();
+        $this->app_config_cred = $this->get_meta_app_cred($this->wa_phone_id);
+
 
     }
 
@@ -73,6 +76,17 @@ class GeneralFunctions extends BotController {
         }
         return $obj;
     }
+
+    public function get_meta_app_cred($wa_phone_id)
+    {
+        $wa_config = Config::get("whatsapp_config");
+        $app_config = $wa_config[$wa_phone_id];
+
+        $app_config['url'] = "https://graph.facebook.com/{$app_config['version']}/{$wa_phone_id}/messages";
+
+        return $app_config;
+    }
+
 
   
 

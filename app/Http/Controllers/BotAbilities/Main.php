@@ -21,6 +21,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
 
     public function begin_func()
     {
+
         // should first check if user accepted terms and conditon
         // if accepeted send intro message and then question
         // else should send the privacy policy question
@@ -47,6 +48,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
     public function makeQuestionList()
     {
         $question_model = new Questions();
+
         $questions = $question_model->where("category",$this->app_config_cred['category'])->get();
 
 
@@ -59,7 +61,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
             }
         }
         $question_obj = $this->MenuArrayToObj($question_Arr);
-        $text_menu = new TextMenuSelection($$question_obj);
+        $text_menu = new TextMenuSelection($question_obj);
         $text_menu->multiple_menu_message($questions);
         $this->go_to_next_step();
 

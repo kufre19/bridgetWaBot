@@ -96,7 +96,7 @@ class TextMenuSelection extends GeneralFunctions
         return $selected_item;
     }
 
-    public function multiple_menu_message(Questions $questions)
+    public function multiple_menu_message( $questions)
     {
         // $menu_messages = [["message","menu text"]...];
         // 
@@ -105,11 +105,11 @@ class TextMenuSelection extends GeneralFunctions
         $specific_intro_messages = $intro_mesasges[$this->app_config_cred["category"]];
         // loop through the sub categories array to get keys and intro messages keys are to be used for also checking what sub cat a question
         // belongs to before creatin an array of intro message key pair and also with the menu text 
-        foreach ($specific_intro_messages as $sub_category => $intro_message) {
+        foreach ($specific_intro_messages as $sub_category_id => $intro_message) {
             $menu_txt = "";
             foreach ($questions as $key => $value) {
-                if($value->sub_category == $sub_category){
-                    $menu_txt  .="{$this->item_menu_counter }. " .  $value->question  . "\n". "\n";
+                if($value->sub_category == $sub_category_id){
+                    $menu_txt  .="{$this->item_menu_counter }. " .  $value->questions  . "\n". "\n";
                     $this->item_menu_counter++;
                     
                 }

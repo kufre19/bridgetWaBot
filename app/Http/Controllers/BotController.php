@@ -125,6 +125,8 @@ class BotController extends Controller
         }
 
         $this->app_config_cred = $this->get_meta_app_cred($this->wa_phone_id);
+ 
+
 
         $this->fetch_user();
         switch ($this->message_type) {
