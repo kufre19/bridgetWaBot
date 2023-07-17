@@ -99,6 +99,7 @@ class TextMenuSelection extends GeneralFunctions
         $question_model = new Questions();
         $menu_messages = [];
         $intro_mesasges = Config::get("intro_messages");
+        $this->item_menu_counter = 1;
         $specific_intro_messages = $intro_mesasges[$this->app_config_cred["category"]];
         // loop through the sub categories array to get keys and intro messages keys are to be used for also checking what sub cat a question
         // belongs to before creatin an array of intro message key pair and also with the menu text 
