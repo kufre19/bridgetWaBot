@@ -92,7 +92,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         $question = $question_model->where("questions",$question_selected)->first();
 
         $answer_model = new Answers();
-        $answer = $question_model->where("question_id",$question->id)->first();
+        $answer = $answer_model->where("question_id",$question->id)->first();
         
        
         $response = $this->splitMessage( $answer->answers);
