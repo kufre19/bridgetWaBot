@@ -110,9 +110,43 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         $text_menu = new TextMenuSelection($question_obj);
         $question_selected = $text_menu->check_selection_from_multiple_menu_message($this->user_message_original,$question_progress);
 
-        if($question_selected == "next_sub")
+        if(is_array($question_selected))
         {
-            $this->makeQuestionList();
+            $question_model = new Questions();
+            $question = $question_model->where("questions",$question_selected[1])->first();
+    
+            $answer_model = new Answers();
+            $answer = $answer_model->where("question_id",$question->id)->first();
+            
+           
+            $response = $this->splitMessage( $answer->answers);
+            foreach ($response as $key => $message) {
+                $text = $this->make_text_message($message, $this->userphone);
+                $send = $this->send_post_curl($text);
+            }
+
+
+            $question_model = new Questions();
+
+            $questions = $question_model->where("category",$this->app_config_cred['category'])->get();
+            $question_progress = $question_selected[2];
+            info($question_progress);
+    
+    
+            $question_Arr = [];
+            foreach ($questions as $key => $value) {
+                if($value->category == $this->app_config_cred['category'])
+                {
+                    array_push($question_Arr,$value->questions);
+    
+                }
+            }
+            $question_obj = $this->MenuArrayToObj($question_Arr);
+            $text_menu = new TextMenuSelection($question_obj);
+            $text_menu->multiple_menu_message($question_progress);
+    
+            $this->ResponsedWith200();
+
         }
 
         $question_model = new Questions();

@@ -96,7 +96,7 @@ class TextMenuSelection extends GeneralFunctions
     {
         // firstly fetch the questions based on the question progress provided
         $question_model = new Questions();
-        $questions = $question_model->where("category", $question_progress['category'])->where("sub_category",$question_progress['sub_category'])->get();
+        $questions = $question_model->where("category", $question_progress['category'])->where("sub_category", $question_progress['sub_category'])->get();
 
         $intro_mesasges = Config::get("intro_messages");
         $this->item_menu_counter = 1;
@@ -104,59 +104,53 @@ class TextMenuSelection extends GeneralFunctions
         $menu_text = "";
         $this->item_menu_counter = 1;
 
-        if($questions->count() > 0)
-        {
+        if ($questions->count() > 0) {
             foreach ($questions as $key => $value) {
-                $menu_text .= "{$this->item_menu_counter}. ". $value->questions . "\n". "\n" ;
+                $menu_text .= "{$this->item_menu_counter}. " . $value->questions . "\n" . "\n";
                 $this->item_menu_counter++;
-    
             }
         }
-       
 
-           
+
+
         $text = $this->make_text_message($the_intro_message, $this->userphone);
         $send = $this->send_post_curl($text);
 
         $text = $this->make_text_message($menu_text, $this->userphone);
         $send = $this->send_post_curl($text);
-
     }
-   
 
-    public function check_selection_from_multiple_menu_message($response,$question_progress)
+
+    public function check_selection_from_multiple_menu_message($response, $question_progress)
     {
-      
-        // 
-         // firstly fetch the questions based on the question progress provided
-         $question_model = new Questions();
-         $questions = $question_model->where("category", $question_progress['category'])->where("sub_category",$question_progress['sub_category'])->get();
- 
-         $intro_mesasges = Config::get("intro_messages");
-         $this->item_menu_counter = 1;
-         $the_intro_message = $intro_mesasges[$question_progress['category']][$question_progress['sub_category']];
-         $menu_text = "";
-         $this->item_menu_counter = 1;
-         $menu_messages = [];
 
- 
-         if($questions->count() > 0)
-         {
-             foreach ($questions as $question => $value) {
-                 array_push($menu_messages, $value->questions);
-                 $menu_text .= "{$this->item_menu_counter}. ". $value->questions . "\n". "\n" ;
-                 $this->item_menu_counter++;
-     
-             }
-         }
- 
-         
+        // 
+        // firstly fetch the questions based on the question progress provided
+        $question_model = new Questions();
+        $questions = $question_model->where("category", $question_progress['category'])->where("sub_category", $question_progress['sub_category'])->get();
+
+        $intro_mesasges = Config::get("intro_messages");
+        $this->item_menu_counter = 1;
+        $the_intro_message = $intro_mesasges[$question_progress['category']][$question_progress['sub_category']];
+        $menu_text = "";
+        $this->item_menu_counter = 1;
+        $menu_messages = [];
+
+
+        if ($questions->count() > 0) {
+            foreach ($questions as $question => $value) {
+                array_push($menu_messages, $value->questions);
+                $menu_text .= "{$this->item_menu_counter}. " . $value->questions . "\n" . "\n";
+                $this->item_menu_counter++;
+            }
+        }
+
+
 
         $array_to_obj = $this->MenuArrayToObj($menu_messages);
         $new_obj = new TextMenuSelection($array_to_obj);
         $new_obj->make_menu_data();
-        if (!in_array($response, $this->expected_responses))
-        {
+        if (!in_array($response, $this->expected_responses)) {
             $message = "Please select an option from the menu";
             $text = $this->make_text_message($message, $this->userphone);
             $send = $this->send_post_curl($text);
@@ -175,51 +169,60 @@ class TextMenuSelection extends GeneralFunctions
 
 
         // check the same question has been asked and recorded
-        if(!in_array($selected,$question_asked)){
-            array_push($question_asked,$selected);
+        if (!in_array($selected, $question_asked)) {
+            array_push($question_asked, $selected);
         }
         // check if the length of the question asked has supassed the lenght of available questions
-        if($questions->count() == count($question_asked))
-        {
-            // increase sub cat then check if it's passed its availabiltity before storing
-            $sub_category++;
-            if($sub_category > $question_progress['sub_cat_limit'])
-            {
-                return $selected;
+        if (count($question_asked) < $questions->count()) {
+            $question_progress = [
+                "category" => $this->app_config_cred['category'],
+                "sub_category" => $sub_category,
+                "sub_cat_limit" => $question_progress['sub_cat_limit'],
+                "questions_asked" => $question_asked,
+                "sub_cats_finished" => $sub_cats_finished,
+            ];
 
-            }else{
-                array_push($sub_cats_finished,$sub_category);
-                if($sub_category == $question_progress['sub_cat_limit'])
-                {
-                    $question_progress = [
-                        "category"=>$this->app_config_cred['category'],
-                        "sub_category"=>$sub_category,
-                        "sub_cat_limit"=>$question_progress['sub_cat_limit'],
-                        "questions_asked"=>$question_asked,
-                        "sub_cats_finished"=>$sub_cats_finished,
-                    ];
+            $new_session = $this->user_session_data;
+            $new_session['question_progress'] = $question_progress;
+            $this->update_session($new_session);
             
-                    $this->add_new_object_to_session("question_progress",$question_progress);
+
+            return $selected;
+        } else {
+            // increase sub cat then check if it's passed its availabiltity before storing
+            $sub_category += 1;
+            
+
+            // check if current count has reached the limit
+            if ($questions->count() == count($question_asked) ) {
+
+                if ($sub_category > $question_progress['sub_cat_limit'] || $sub_category > $question_progress['sub_cat_limit']) {
+                    info("limit at sub cat");
     
-                    return "next_sub";
+                    return $selected;
                 }
+                // send selected and go to sub
+                $question_progress = [
+                    "category" => $this->app_config_cred['category'],
+                    "sub_category" => $sub_category ,
+                    "sub_cat_limit" => $question_progress['sub_cat_limit'],
+                    "questions_asked" => [],
+                    "sub_cats_finished" => $sub_cats_finished,
+                ];
 
-               
+                $new_session = $this->user_session_data;
+                $new_session['question_progress'] = $question_progress;
+                $this->update_session($new_session);
+                // echo "here";
+                // die;
+              
+              
 
-            }
+
+                return ["next_sub", $selected,$question_progress];
+            } 
+
+            
         }
-        $question_progress = [
-            "category"=>$this->app_config_cred['category'],
-            "sub_category"=>$sub_category,
-            "sub_cat_limit"=>$question_progress['sub_cat_limit'],
-            "questions_asked"=>$question_asked,
-            "sub_cats_finished"=>$sub_cats_finished,
-        ];
-
-        $this->add_new_object_to_session("question_progress",$question_progress);
-
-
-       return $selected;
-        
     }
 }
