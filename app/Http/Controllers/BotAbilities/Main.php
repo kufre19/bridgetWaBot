@@ -110,6 +110,11 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         $text_menu = new TextMenuSelection($question_obj);
         $question_selected = $text_menu->check_selection_from_multiple_menu_message($this->user_message_original,$question_progress);
 
+        if($question_selected == "next_sub")
+        {
+            $this->makeQuestionList();
+        }
+
         $question_model = new Questions();
         $question = $question_model->where("questions",$question_selected)->first();
 

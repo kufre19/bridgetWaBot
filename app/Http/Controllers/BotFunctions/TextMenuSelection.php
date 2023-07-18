@@ -189,6 +189,22 @@ class TextMenuSelection extends GeneralFunctions
 
             }else{
                 array_push($sub_cats_finished,$sub_category);
+                if($sub_category == $question_progress['sub_cat_limit'])
+                {
+                    $question_progress = [
+                        "category"=>$this->app_config_cred['category'],
+                        "sub_category"=>$sub_category,
+                        "sub_cat_limit"=>$question_progress['sub_cat_limit'],
+                        "questions_asked"=>$question_asked,
+                        "sub_cats_finished"=>$sub_cats_finished,
+                    ];
+            
+                    $this->add_new_object_to_session("question_progress",$question_progress);
+    
+                    return "next_sub";
+                }
+
+               
 
             }
         }
