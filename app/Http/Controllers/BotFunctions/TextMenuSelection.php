@@ -165,8 +165,45 @@ class TextMenuSelection extends GeneralFunctions
             $this->ResponsedWith200();
         }
 
+        $selected = $new_obj->get_selected_item($response);
 
-       return $new_obj->get_selected_item($response);
+        // update question progress variable 
+        // the values that must be tracked
+        $question_asked = $question_progress['questions_asked'];
+        $sub_category = $question_progress['sub_category'];
+        $sub_cats_finished = $question_progress['sub_cats_finished'];
+
+
+        // check the same question has been asked and recorded
+        if(!in_array($selected,$question_asked)){
+            array_push($question_asked,$selected);
+        }
+        // check if the length of the question asked has supassed the lenght of available questions
+        if($questions->count() == count($question_asked))
+        {
+            // increase sub cat then check if it's passed its availabiltity before storing
+            $sub_category++;
+            if($sub_category > $question_progress['sub_cat_limit'])
+            {
+                return $selected;
+
+            }else{
+                array_push($sub_cats_finished,$sub_category);
+
+            }
+        }
+        $question_progress = [
+            "category"=>$this->app_config_cred['category'],
+            "sub_category"=>$sub_category,
+            "sub_cat_limit"=>$question_progress['sub_cat_limit'],
+            "questions_asked"=>$question_asked,
+            "sub_cats_finished"=>$sub_cats_finished,
+        ];
+
+        $this->add_new_object_to_session("question_progress",$question_progress);
+
+
+       return $selected;
         
     }
 }
