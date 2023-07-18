@@ -46,11 +46,31 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         
     }
 
+    public function getQuestionProgress()
+    {
+        $question_progress = $this->user_session_data['question_progress'] ?? "";
+        // createa the object if it's empty
+        if($question_progress == ""){
+            $question_progress = [
+                "category"=>$this->app_config_cred['category'],
+                "sub_category"=>1,
+                "sub_cat_limit"=>$this->app_config_cred['no_of_sub_cat'],
+                "questions_asked"=>[],
+                "sub_cats_finished"=>[],
+            ];
+            $this->add_new_object_to_session("question_progress",$question_progress);
+        }
+
+        return $question_progress;
+    }
+
+    // track first the sub category the user is on currently
     public function makeQuestionList()
     {
         $question_model = new Questions();
 
         $questions = $question_model->where("category",$this->app_config_cred['category'])->get();
+        $question_progress = $this->getQuestionProgress();
 
 
         $question_Arr = [];
@@ -63,7 +83,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         }
         $question_obj = $this->MenuArrayToObj($question_Arr);
         $text_menu = new TextMenuSelection($question_obj);
-        $text_menu->multiple_menu_message();
+        $text_menu->multiple_menu_message($question_progress);
         $this->go_to_next_step();
 
         $this->ResponsedWith200();
@@ -74,6 +94,8 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
     public function checkSelection(){
         $question_model = new Questions();
         $questions = $question_model->where("category",$this->app_config_cred['category'])->get();
+        $question_progress = $this->getQuestionProgress();
+
 
 
         $question_Arr = [];
@@ -86,7 +108,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
         }
         $question_obj = $this->MenuArrayToObj($question_Arr);
         $text_menu = new TextMenuSelection($question_obj);
-        $question_selected = $text_menu->check_selection_from_multiple_menu_message($this->user_message_original);
+        $question_selected = $text_menu->check_selection_from_multiple_menu_message($this->user_message_original,$question_progress);
 
         $question_model = new Questions();
         $question = $question_model->where("questions",$question_selected)->first();

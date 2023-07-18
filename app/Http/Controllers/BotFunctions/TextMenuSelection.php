@@ -92,68 +92,65 @@ class TextMenuSelection extends GeneralFunctions
         return $selected_item;
     }
 
-    public function multiple_menu_message()
+    public function multiple_menu_message($question_progress)
     {
-        // $menu_messages = [["message","menu text"]...];
-        // 
+        // firstly fetch the questions based on the question progress provided
         $question_model = new Questions();
-        $menu_messages = [];
+        $questions = $question_model->where("category", $question_progress['category'])->where("sub_category",$question_progress['sub_category'])->get();
+
         $intro_mesasges = Config::get("intro_messages");
         $this->item_menu_counter = 1;
-        $specific_intro_messages = $intro_mesasges[$this->app_config_cred["category"]];
-        // loop through the sub categories array to get keys and intro messages keys are to be used for also checking what sub cat a question
-        // belongs to before creatin an array of intro message key pair and also with the menu text 
-        foreach ($specific_intro_messages as $sub_category_id => $intro_message) {
-            $menu_txt = "";                                                                                
-            $questions = $question_model->where("category", $this->app_config_cred['category'])
-            ->where("sub_category",$sub_category_id)->get();
+        $the_intro_message = $intro_mesasges[$question_progress['category']][$question_progress['sub_category']];
+        $menu_text = "";
+        $this->item_menu_counter = 1;
 
-            if($questions->count() > 0)
-            {
-                foreach ($questions as $question => $value) {
-                    $menu_txt  .= "{$this->item_menu_counter}. " .  $value->questions  . "\n" . "\n";
-                    $this->item_menu_counter++;
-                }
-                array_push($menu_messages, ["message" => $intro_message, "menu_text" => $menu_txt]);
+        if($questions->count() > 0)
+        {
+            foreach ($questions as $key => $value) {
+                $menu_text .= "{$this->item_menu_counter}. ". $value->questions . "\n". "\n" ;
+                $this->item_menu_counter++;
+    
             }
-            
         }
+       
 
-        // loop through the menu message to display the messages 
-        foreach ($menu_messages as $key => $value) {
-            $text = $this->make_text_message($value['message'], $this->userphone);
-            $send = $this->send_post_curl($text);
-            $text = $this->make_text_message($value['menu_text'], $this->userphone);
-            $send = $this->send_post_curl($text);
-        }
+           
+        $text = $this->make_text_message($the_intro_message, $this->userphone);
+        $send = $this->send_post_curl($text);
+
+        $text = $this->make_text_message($menu_text, $this->userphone);
+        $send = $this->send_post_curl($text);
+
     }
+   
 
-    public function check_selection_from_multiple_menu_message($response)
+    public function check_selection_from_multiple_menu_message($response,$question_progress)
     {
-        // $menu_messages = [["message","menu text"]...];
+      
         // 
-        $question_model = new Questions();
-        $menu_messages = [];
-        $intro_mesasges = Config::get("intro_messages");
-        $this->item_menu_counter = 1;
-        $specific_intro_messages = $intro_mesasges[$this->app_config_cred["category"]];
-      /**
-       * create an array from the list of questions that are correctly matched only with their category and sub cat  ID
-       * then use the array to create an object that will be used to create a new object of this class then used to create expexted responses
-       * that would be checked and responded to accordingly 
-       */
-        foreach ($specific_intro_messages as $sub_category_id => $intro_message) {                                                                           
-            $questions = $question_model->where("category", $this->app_config_cred['category'])
-            ->where("sub_category",$sub_category_id)->get();
+         // firstly fetch the questions based on the question progress provided
+         $question_model = new Questions();
+         $questions = $question_model->where("category", $question_progress['category'])->where("sub_category",$question_progress['sub_category'])->get();
+ 
+         $intro_mesasges = Config::get("intro_messages");
+         $this->item_menu_counter = 1;
+         $the_intro_message = $intro_mesasges[$question_progress['category']][$question_progress['sub_category']];
+         $menu_text = "";
+         $this->item_menu_counter = 1;
+         $menu_messages = [];
 
-            if($questions->count() > 0)
-            {
-                foreach ($questions as $question => $value) {
-                    array_push($menu_messages, $value->questions);                   
-                }
-            }
-            
-        }
+ 
+         if($questions->count() > 0)
+         {
+             foreach ($questions as $question => $value) {
+                 array_push($menu_messages, $value->questions);
+                 $menu_text .= "{$this->item_menu_counter}. ". $value->questions . "\n". "\n" ;
+                 $this->item_menu_counter++;
+     
+             }
+         }
+ 
+         
 
         $array_to_obj = $this->MenuArrayToObj($menu_messages);
         $new_obj = new TextMenuSelection($array_to_obj);
@@ -164,7 +161,7 @@ class TextMenuSelection extends GeneralFunctions
             $text = $this->make_text_message($message, $this->userphone);
             $send = $this->send_post_curl($text);
 
-            $this->multiple_menu_message();
+            $this->multiple_menu_message($question_progress);
             $this->ResponsedWith200();
         }
 
