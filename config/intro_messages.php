@@ -19,7 +19,7 @@ return [
         MSG,
         "6"=>"Now that you have learned  how the different types of drugs work, I can provide information on how to take your medications correctly and consistently (medication adherence) to control blood presure. To GET ACCURATE ANSWERS, type in a corresponding number to the question or type in the questions below exactly as they appear below. ",
         "7"=>"now that you have learned  how to adhere to medications, I can provide information on possible organ damage (complications) that may occur when hypertension is not treated or controlled. To GET ACCURATE ANSWERS, type in a corresponding number to the question or type in the questions below exactly as they appear below. ",
-        "8"=>"now that you have learned complications that may occur when hypertension is not treated or controlled, I can  tell you things that are not true that people say are true about hypetension. To GET ACCURATE ANSWERS, type in a corresponding number to the question or type in the questions below exactly as they appear below.",
+        "8"=>"now that you have learned complications that may occur when hypertension is not treated or controlled, I can  tell you things that are not true that people say are true about hypetension . To GET ACCURATE ANSWERS, type in the questions below exactly as they appear below.",
 
 
     ]
