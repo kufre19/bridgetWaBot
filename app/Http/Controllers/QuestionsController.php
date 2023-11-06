@@ -14,6 +14,7 @@ class QuestionsController extends Controller
     {
         $question = new Questions();
         $question->questions = $request->input('question');
+        $question->corresponding_number = $request->input('corresponding_number');
         $question->category = $request->input('category');
         $question->sub_category = $request->input('sub_category');
 
@@ -56,6 +57,8 @@ class QuestionsController extends Controller
         $answer = $request->input('answer');
         $category = $request->input('category');
         $sub_category = $request->input('sub_category');
+        $corresponding_number = $request->input('corresponding_number');
+
 
 
         $q_id = $request->input('q_id');
@@ -68,6 +71,10 @@ class QuestionsController extends Controller
 
         if (!empty($category)) {
             $question_model->where('id', $q_id)->update(['category' => $category]);
+        }
+
+        if (!empty($corresponding_number)) {
+            $question_model->where('id', $q_id)->update(['corresponding_number' => $corresponding_number]);
         }
 
         if (!empty($sub_category)) {

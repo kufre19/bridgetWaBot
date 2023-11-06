@@ -53,10 +53,15 @@
                                 <label for="question">Question:</label>
                                 <input type="text" name="question" class="form-control" id="question" placeholder="Enter question">
                             </div>
+                            <div class="form-group">
+                                <label for="corresponding_number">Question Number:</label>
+                                <input type="text" name="corresponding_number" class="form-control" id="corresponding_number" placeholder="Enter question corresponding number">
+                            </div>
                              <div class="form-group">
                                 <label for="cat">Category:</label>
                                 <select name="category" id="cat" class="form-control">
                                     <option value="hypertension">Hypertention</option>
+                                    <option value="diabetes">Diabetes</option>
                                 </select>
                                 
                             </div>

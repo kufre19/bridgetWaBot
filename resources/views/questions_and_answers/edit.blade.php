@@ -56,10 +56,17 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="corresponding_number">Question Number:</label>
+                                <input type="text" name="corresponding_number" value="{{$question->corresponding_number}}" class="form-control" id="corresponding_number" placeholder="Enter question corresponding number">
+                            </div>
+                            
+
+                            <div class="form-group">
                                 <label for="cat">Category:</label>
                                 <select name="category" id="cat" class="form-control">
                                     <option value="{{$question->category ?? ""}}" selected>{{$question->category ?? ""}}</option>
                                     <option value="hypertension">Hypertension</option>
+                                    <option value="diabetes">Diabetes</option>
                                 </select>
                                 
                             </div>

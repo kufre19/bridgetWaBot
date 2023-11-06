@@ -190,9 +190,6 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
 
         $this->accepted_terms = $user->accepted_terms;
 
-       
-        
-
     }
 
    
