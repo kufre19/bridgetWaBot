@@ -46,7 +46,7 @@ trait SendMessage
             $to = $this->userphone;
         }
         $this->send_post_curl($this->make_text_message($text,$to));
-        return response("", 200);
+        return response("ok", 200);
     }
 
     public function send_media_message($type, $file_url, $caption = null)

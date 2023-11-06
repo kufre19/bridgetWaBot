@@ -48,48 +48,52 @@ class BotController extends Controller
     {
         $this->store_request_obj($request);
 
-        $this->LogInput($request);
+        // $this->LogInput($request);
         if (!isset($request['hub_verify_token'])) {
+            if (isset($request['entry'])) {
 
-            $this->username = $request['entry'][0]['changes'][0]["value"]['contacts'][0]['profile']['name'] ?? "there";
-            $this->userphone = $request['entry'][0]['changes'][0]["value"]['contacts'][0]['wa_id'];
-            $this->wa_phone_id = $request['entry'][0]['changes'][0]["value"]['metadata']["phone_number_id"];
-
-
-            // info($request);
-
-            if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['text'])) {
-                $this->user_message_original = $request['entry'][0]['changes'][0]["value"]['messages'][0]['text']['body'];
-                $this->user_message_lowered  = strtolower($this->user_message_original);
-                $this->message_type = "text";
-            }
-
-            if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['image'])) {
-                $this->wa_image_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['image']['id'];
-                $this->message_type = "image";
-            }
+                $this->username = $request['entry'][0]['changes'][0]["value"]['contacts'][0]['profile']['name'] ?? "there";
+                $this->userphone = $request['entry'][0]['changes'][0]["value"]['contacts'][0]['wa_id'];
+                $this->wa_phone_id = $request['entry'][0]['changes'][0]["value"]['metadata']["phone_number_id"];
 
 
-            if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive'])) {
-                $interactive_type = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['type'];
-                switch ($interactive_type) {
-                    case 'list_reply':
-                        $this->menu_item_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['list_reply']['id'];
-                        $this->message_type = "menu";
+                // info($request);
 
-                        break;
-
-                    case 'button_reply':
-                        $this->button_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['button_reply']['id'];
-                        $this->message_type = "button";
-
-                        break;
-
-
-                    default:
-                        dd("unknow command");
-                        break;
+                if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['text'])) {
+                    $this->user_message_original = $request['entry'][0]['changes'][0]["value"]['messages'][0]['text']['body'];
+                    $this->user_message_lowered  = strtolower($this->user_message_original);
+                    $this->message_type = "text";
                 }
+
+                if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['image'])) {
+                    $this->wa_image_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['image']['id'];
+                    $this->message_type = "image";
+                }
+
+
+                if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive'])) {
+                    $interactive_type = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['type'];
+                    switch ($interactive_type) {
+                        case 'list_reply':
+                            $this->menu_item_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['list_reply']['id'];
+                            $this->message_type = "menu";
+
+                            break;
+
+                        case 'button_reply':
+                            $this->button_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['button_reply']['id'];
+                            $this->message_type = "button";
+
+                            break;
+
+
+                        default:
+                            dd("unknow command");
+                            break;
+                    }
+                }
+            }else {
+                $this->message_type = "end unkown";
             }
         }
     }
@@ -97,6 +101,11 @@ class BotController extends Controller
 
     public function index(Request $request)
     {
+        if($this->message_type == "end unkown")
+        {
+            return response("ok", 200);
+
+        }
         if (isset($request['hub_verify_token'])) {
             return $this->verify_bot($request);
         }
