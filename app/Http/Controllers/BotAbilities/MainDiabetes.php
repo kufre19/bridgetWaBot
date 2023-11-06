@@ -52,18 +52,15 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
                 // method to upodate the corressponding_number and store it
                 // send the answer here
                 $answer = $this->getAnswer($this->user_message_original);
-                if($answer == false)
-                {
+                if ($answer == false) {
                     $this->ResponsedWith200();
-
                 }
                 $text = $this->make_text_message($answer, $this->userphone);
                 $send = $this->send_post_curl($text);
-
+                $this->ResponsedWith200();
             } else {
                 // user response not authorized might just kill the flow here
                 $this->ResponsedWith200();
-
             }
         } else {
             // user just started conversation
@@ -71,24 +68,24 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
             $message = "Press 1 to get started with your learning journey!";
             $text = $this->make_text_message($message, $this->userphone);
             $send = $this->send_post_curl($text);
+            $this->ResponsedWith200();
         }
     }
 
     public function getAnswer($corresponding_number)
     {
-        $question = Questions::where("category",$this->app_config_cred['category'])->where("corresponding_number",$corresponding_number)->first();
+        $question = Questions::where("category", $this->app_config_cred['category'])->where("corresponding_number", $corresponding_number)->first();
 
-        if(!$question)
-        {
+        if (!$question) {
             // not found the question
             return false;
-        }else{
+        } else {
             // update the question progress
             // fetch answer from queston
             // return the answer
 
             $this->updateQuestionProgress($question);
-            $answer = Answers::where("question_id",$question->id)->first();
+            $answer = Answers::where("question_id", $question->id)->first();
             return  $answer->answers;
         }
     }
@@ -98,12 +95,11 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
         $question_progress = $this->user_session_data['question_progress']['diabetes'];
         $old_corresponding = $question->corresponding_number;
         $new_corresponding = $old_corresponding++;
-        $question_progress['questions_asked'][] = $new_corresponding; 
+        $question_progress['questions_asked'][] = $new_corresponding;
 
         $new_session = $this->user_session_data;
         $new_session['question_progress']['diabetes'] = $question_progress;
         $this->update_session($new_session);
-
     }
 
     public function getQuestionProgress()
@@ -111,7 +107,7 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
         $question_progress = $this->user_session_data['question_progress']['diabetes'] ?? "";
         // createa the object if it's empty
         if ($question_progress == "") {
-            $question_progress =[ "diabetes"=> [
+            $question_progress = ["diabetes" => [
                 "category" => $this->app_config_cred['category'],
                 "sub_category" => 1,
                 "sub_cat_limit" => $this->app_config_cred['no_of_sub_cat'],
