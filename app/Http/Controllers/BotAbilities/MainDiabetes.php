@@ -52,12 +52,18 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
                 // method to upodate the corressponding_number and store it
                 // send the answer here
                 $answer = $this->getAnswer($this->user_message_original);
+                if($answer == false)
+                {
+                    response("ok", 200);
+                    die;
+                }
                 $text = $this->make_text_message($answer, $this->userphone);
                 $send = $this->send_post_curl($text);
 
             } else {
                 // user response not authorized might just kill the flow here
-                return response("ok", 200);
+                response("ok", 200);
+                die;
             }
         } else {
             // user just started conversation
