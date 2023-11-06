@@ -130,7 +130,7 @@ class Main extends BotFunctionsGeneralFunctions implements AbilityInterface
 
             $questions = $question_model->where("category",$this->app_config_cred['category'])->get();
             $question_progress = $question_selected[2];
-            info($question_progress);
+            // info($question_progress);
     
     
             $question_Arr = [];

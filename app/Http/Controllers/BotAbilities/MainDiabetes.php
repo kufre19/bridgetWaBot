@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterface
 {
-    public $steps = ["begin_func","sendAnswers"];
+    public $steps = ["begin_func", "sendAnswers"];
     public $accepted_terms;
     public $question_arr_list = [];
 
@@ -20,29 +20,15 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
     {
         $this->get_Wa_user();
 
-        if($this->accepted_terms == "accepted")
-        {
+        if ($this->accepted_terms == "accepted") {
             // send intro and list of questions
             $this->set_session_route("MainDiabetes");
             $this->go_to_next_step();
             $this->continue_session_step();
-        }else{
+        } else {
             $terms_andcondition = new TermsAndCondition();
             $terms_andcondition->begin_func();
         }
-    }
-
-    // 
-
-    public function makeQuestionSession()
-    {
-
-
-    }
-
-    public function updateAllowedQuestions()
-    {
-        // this to fetch a question based on the corresponding number from number 
     }
 
     public function sendAnswers()
@@ -56,39 +42,78 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
         // increement the value for corresponding number asked by 1 then store
 
         $question_progress = $this->getQuestionProgress();
-        if(!empty($question_progress['questions_asked']))
-        {
+        if (!empty($question_progress['questions_asked'])) {
             // user did not just start conversation
 
-            if(in_array($this->user_message_original,$question_progress['questions_asked']))
-            {
+            if (in_array($this->user_message_original, $question_progress['questions_asked'])) {
 
                 // user asked/ pressed authorized question/number
-            }else {
+                // make method to check and fetch the question
+                // method to upodate the corressponding_number and store it
+                // send the answer here
+                $answer = $this->getAnswer($this->user_message_original);
+                $text = $this->make_text_message($answer, $this->userphone);
+                $send = $this->send_post_curl($text);
+
+            } else {
                 // user response not authorized might just kill the flow here
+                return response("ok", 200);
             }
-        }else {
+        } else {
             // user just started conversation
             $question_progress['questions_asked'][] = 1;
             $message = "Press 1 to get started with your learning journey!";
             $text = $this->make_text_message($message, $this->userphone);
-            $send = $this->send_post_curl($text);       
-         }
+            $send = $this->send_post_curl($text);
+        }
+    }
+
+    public function getAnswer($corresponding_number)
+    {
+        $question = Questions::where("category",$this->app_config_cred['category'])->where("corresponding_number",$corresponding_number)->first();
+
+        if(!$question)
+        {
+            // not found the question
+            return false;
+        }else{
+            // update the question progress
+            // fetch answer from queston
+            // return the answer
+
+            $this->updateQuestionProgress($question);
+            $answer = Answers::where("question_id",$question->id)->first();
+            return  $answer->answers;
+        }
+    }
+
+    public function updateQuestionProgress($question)
+    {
+        $question_progress = $this->user_session_data['question_progress']['diabetes'];
+        $old_corresponding = $question->corresponding_number;
+        $new_corresponding = $old_corresponding++;
+        $question_progress['questions_asked'][] = $new_corresponding; 
+
+        $new_session = $this->user_session_data;
+        $new_session['question_progress']['diabetes'] = $question_progress;
+        $this->update_session($new_session);
+
     }
 
     public function getQuestionProgress()
     {
-        $question_progress = $this->user_session_data['question_progress'] ?? "";
+        $question_progress = $this->user_session_data['question_progress']['diabetes'] ?? "";
         // createa the object if it's empty
-        if($question_progress == ""){
-            $question_progress = [
-                "category"=>$this->app_config_cred['category'],
-                "sub_category"=>1,
-                "sub_cat_limit"=>$this->app_config_cred['no_of_sub_cat'],
-                "questions_asked"=>[],
-                "sub_cats_finished"=>[],
-            ];
-            $this->add_new_object_to_session("question_progress",$question_progress);
+        if ($question_progress == "") {
+            $question_progress =[ "diabetes"=> [
+                "category" => $this->app_config_cred['category'],
+                "sub_category" => 1,
+                "sub_cat_limit" => $this->app_config_cred['no_of_sub_cat'],
+                "questions_asked" => [],
+                "sub_cats_finished" => [],
+            ]];
+            $this->add_new_object_to_session("question_progress", $question_progress);
+            $question_progress = $question_progress['diabetes'];
         }
 
         return $question_progress;
@@ -96,10 +121,9 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
     public function get_Wa_user()
     {
         $usermodel = new User();
-        $user = $usermodel->where('whatsapp_id',$this->userphone)->first();
+        $user = $usermodel->where('whatsapp_id', $this->userphone)->first();
 
         $this->accepted_terms = $user->accepted_terms;
-
     }
 
     public function call_method($key)
@@ -107,5 +131,4 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
         $method_name = $this->steps[$key];
         $this->$method_name();
     }
-
 }
