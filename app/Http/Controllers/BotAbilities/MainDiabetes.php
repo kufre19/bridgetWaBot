@@ -68,7 +68,7 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
             $new_session = $this->user_session_data;
             $new_session['question_progress']['diabetes'] = $question_progress;
             $this->update_session($new_session);
-            
+
             $message = "Press 1 to get started with your learning journey!";
             $text = $this->make_text_message($message, $this->userphone);
             $send = $this->send_post_curl($text);
@@ -98,7 +98,7 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
     {
         $question_progress = $this->user_session_data['question_progress']['diabetes'];
         $old_corresponding = $question->corresponding_number;
-        $new_corresponding = $old_corresponding++;
+        $new_corresponding = $old_corresponding + 1;
         $question_progress['questions_asked'][] = $new_corresponding;
 
         $new_session = $this->user_session_data;
