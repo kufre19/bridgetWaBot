@@ -19,12 +19,12 @@ use Illuminate\Support\Facades\Config;
 
 class BotController extends Controller
 {
-    use HandleText, HandleButton, HandleMenu, SendMessage, MessagesType, HandleSession,GeneralFunctions,HandleImage;
+    use HandleText, HandleButton, HandleMenu, SendMessage, MessagesType, HandleSession, GeneralFunctions, HandleImage;
 
     public $user_message_original;
     public $user_message_lowered;
     public $button_id;
-    public $menu_item_id; 
+    public $menu_item_id;
     public $username;
     public $userphone;
     public $userfetched;
@@ -35,8 +35,8 @@ class BotController extends Controller
     public $user_subscription;
     public $wa_phone_id;
     public $app_config_cred;
-    
-  
+
+
     /* 
     @$menu_item_id holds the id sent back from selecting an item from whatsapp
     @
@@ -48,84 +48,61 @@ class BotController extends Controller
     {
         $this->store_request_obj($request);
 
-       
-        //   $data = json_encode($request->all());
-        //     $file = time() .rand(). '_file.json';
-        //     $destinationPath=public_path()."/upload/";
-        //     if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
-        //     File::put($destinationPath.$file,$data);
-        //     die;
-       
-        if(!isset($request['hub_verify_token'])){
-    
-            $this->username =$request['entry'][0]['changes'][0]["value"]['contacts'][0]['profile']['name'] ?? "there";
-            $this->userphone =$request['entry'][0]['changes'][0]["value"]['contacts'][0]['wa_id'];
-            $this->wa_phone_id =$request['entry'][0]['changes'][0]["value"]['metadata']["phone_number_id"];
+        $this->LogInput($request);
+        if (!isset($request['hub_verify_token'])) {
+
+            $this->username = $request['entry'][0]['changes'][0]["value"]['contacts'][0]['profile']['name'] ?? "there";
+            $this->userphone = $request['entry'][0]['changes'][0]["value"]['contacts'][0]['wa_id'];
+            $this->wa_phone_id = $request['entry'][0]['changes'][0]["value"]['metadata']["phone_number_id"];
 
 
             // info($request);
 
-            if(isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['text']))
-            {
+            if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['text'])) {
                 $this->user_message_original = $request['entry'][0]['changes'][0]["value"]['messages'][0]['text']['body'];
                 $this->user_message_lowered  = strtolower($this->user_message_original);
                 $this->message_type = "text";
-            
             }
 
-            if(isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['image']))
-            {
+            if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['image'])) {
                 $this->wa_image_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['image']['id'];
                 $this->message_type = "image";
-            
             }
-            
-    
-            if(isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']))
-            {
+
+
+            if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive'])) {
                 $interactive_type = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['type'];
                 switch ($interactive_type) {
                     case 'list_reply':
                         $this->menu_item_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['list_reply']['id'];
                         $this->message_type = "menu";
-    
+
                         break;
-    
+
                     case 'button_reply':
                         $this->button_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['button_reply']['id'];
                         $this->message_type = "button";
-    
+
                         break;
-                    
-                    
+
+
                     default:
                         dd("unknow command");
                         break;
                 }
-               
-    
-    
             }
-           
-    
-          
-
         }
-
-       
-        
     }
 
-    
+
     public function index(Request $request)
     {
-        if(isset($request['hub_verify_token']))
-        {
+        if (isset($request['hub_verify_token'])) {
             return $this->verify_bot($request);
         }
 
         $this->app_config_cred = $this->get_meta_app_cred($this->wa_phone_id);
- 
+
 
 
         $this->fetch_user();
@@ -145,41 +122,34 @@ class BotController extends Controller
             case 'image':
                 $this->image_index();
                 break;
-            
+
             default:
                 die;
                 break;
         }
-
-
     }
 
 
     public function test(Request $request)
     {
-        if(isset($request['hub_verify_token']))
-        {
+        if (isset($request['hub_verify_token'])) {
             return $this->verify_bot($request);
         }
 
         $this->send_text_message($this->user_message_original);
         die;
-        
     }
 
 
     public function fetch_user()
     {
         $model = new User();
-        $fetch = $model->where('whatsapp_id',$this->userphone)->first();
-        if(!$fetch)
-        {
+        $fetch = $model->where('whatsapp_id', $this->userphone)->first();
+        if (!$fetch) {
             $this->register_user();
-           
-        }else {
+        } else {
             $this->fetch_user_session();
         }
-
     }
 
 
@@ -209,21 +179,30 @@ class BotController extends Controller
     {
         if (isset($input['hub_verify_token'])) { ## allows facebook verify that this is the right webhook
             $token  = env("VERIFY_TOKEN");
-                    if ($input['hub_verify_token'] ===$token) {
-                        return $input['hub_challenge'];
-                        dd();
-                    } else {
-                        echo 'Invalid Verify Token';
-                        dd();
-                    }
-                }
+            if ($input['hub_verify_token'] === $token) {
+                return $input['hub_challenge'];
+                dd();
+            } else {
+                echo 'Invalid Verify Token';
+                dd();
+            }
+        }
     }
 
     public function store_request_obj(Request $request)
     {
-        session()->put("request_stored",$request);
-      
+        session()->put("request_stored", $request);
     }
+    // for testing purposes
+    public function LogInput($data)
+    {
 
-
+        $data = json_encode($data);
+        $file = time() . rand() . '_file.json';
+        $destinationPath = public_path() . "/upload/";
+        if (!is_dir($destinationPath)) {
+            mkdir($destinationPath, 0777, true);
+        }
+        File::put($destinationPath . $file, $data);
+    }
 }

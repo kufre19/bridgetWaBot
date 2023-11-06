@@ -6,6 +6,7 @@ namespace App\Traits;
 
 use App\Http\Controllers\BotAbilities\GetInfo;
 use App\Http\Controllers\BotAbilities\Main;
+use App\Http\Controllers\BotAbilities\MainDiabetes;
 use App\Models\Answers;
 use App\Models\Questions;
 use App\Models\User;
@@ -34,8 +35,16 @@ trait HandleText
             $this->send_greetings_message($this->userphone);
 
               // this will lead always to the main ability
-              $main = new Main;
-              $main->begin_func();
+              if($this->app_config_cred['category'] == "diabetes")
+              {
+                  // start the session for mainDiabetes
+                  $diabetes_bot = new MainDiabetes();
+                  $diabetes_bot->begin_func();
+              }else{
+                $main = new Main;
+                $main->begin_func();
+              }
+              
         } else {
 
             // this will lead always to the main ability
