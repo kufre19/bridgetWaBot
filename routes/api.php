@@ -20,6 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::any('/bot',[\App\Http\Controllers\BotController::class,'index']);
+Route::any('/bot/diabetes',[\App\Http\Controllers\BotController::class,'index']);
+
 
 Route::any('/dialogflow/payload',[\App\Http\Controllers\DialogFlowController::class,'index']);
 Route::any('/dialogflow/test',[\App\Http\Controllers\DialogFlowController::class,'init_dialogFlow_two']);
