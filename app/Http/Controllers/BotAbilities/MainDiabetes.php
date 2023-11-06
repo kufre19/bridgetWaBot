@@ -65,6 +65,10 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
         } else {
             // user just started conversation
             $question_progress['questions_asked'][] = 1;
+            $new_session = $this->user_session_data;
+            $new_session['question_progress']['diabetes'] = $question_progress;
+            $this->update_session($new_session);
+            
             $message = "Press 1 to get started with your learning journey!";
             $text = $this->make_text_message($message, $this->userphone);
             $send = $this->send_post_curl($text);
