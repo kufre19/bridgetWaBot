@@ -58,8 +58,16 @@ class TermsAndCondition extends GeneralFunctions implements AbilityInterface
         if($response == "1" || $response =="Accept"){
             // update user accepted_term field and go back to main ability
             $this->update_Wa_user_terms();
-            $main = new Main;
-            $main->begin_func();
+            
+            if($this->app_config_cred['category'] == "diabetes")
+              {
+                  // start the session for mainDiabetes
+                  $diabetes_bot = new MainDiabetes();
+                  $diabetes_bot->begin_func();
+              }else{
+                $main = new Main;
+                $main->begin_func();
+              }
 
 
         }

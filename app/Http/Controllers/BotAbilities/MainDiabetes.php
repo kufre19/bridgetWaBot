@@ -54,16 +54,16 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
                 $answer = $this->getAnswer($this->user_message_original);
                 if($answer == false)
                 {
-                    response("ok", 200);
-                    die;
+                    $this->ResponsedWith200();
+
                 }
                 $text = $this->make_text_message($answer, $this->userphone);
                 $send = $this->send_post_curl($text);
 
             } else {
                 // user response not authorized might just kill the flow here
-                response("ok", 200);
-                die;
+                $this->ResponsedWith200();
+
             }
         } else {
             // user just started conversation
