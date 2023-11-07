@@ -48,7 +48,7 @@ class BotController extends Controller
     {
         $this->store_request_obj($request);
 
-        // $this->LogInput($request);
+        $this->LogInput($request);
         if (!isset($request['hub_verify_token'])) {
             if (isset($request['entry'])) {
 
