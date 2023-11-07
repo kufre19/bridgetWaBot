@@ -54,7 +54,7 @@ class BotController extends Controller
 
 
             // Any code here that might throw an exception.
-            if (isset($request['entry'][0]['changes'][0]["statuses"])) {
+            if (isset($request['entry'][0]['changes'][0]['value']['statuses'])) {
                 $this->message_type = "end unknown";
                 $this->LogInput($request->all());
             } else {
@@ -110,7 +110,8 @@ class BotController extends Controller
     {
         if ($this->message_type == "end unkown") {
             http_response_code(200);
-            exit(200);        }
+            return exit(200);        
+        }
 
         if (isset($request['hub_verify_token'])) {
             return $this->verify_bot($request);
