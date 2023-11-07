@@ -127,7 +127,9 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
     public function get_Wa_user()
     {
         $usermodel = new User();
-        $user = $usermodel->where('whatsapp_id', $this->userphone)->first();
+        $user = $usermodel->where('whatsapp_id', $this->userphone)
+        ->where('bot_category', $this->app_config_cred['category'])
+        ->first();
 
         $this->accepted_terms = $user->accepted_terms;
     }
