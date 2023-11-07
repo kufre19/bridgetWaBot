@@ -48,7 +48,11 @@ trait HandleSession
     public function did_session_expired()
     {
         $model = new Session();
-        $fetch = $model->select('expires_in')->where('whatsapp_id', $this->userphone)->first();
+        
+        $bot_category =  $this->app_config_cred['category'];
+        $fetch = $model->select('expires_in')->where('whatsapp_id', $this->userphone)
+        ->where('bot_category', $bot_category)
+        ->first();
 
         if (!$fetch) {
             $this->user_session_status = 0;
@@ -90,16 +94,14 @@ trait HandleSession
         $model = new Session();
         if ($this->did_session_expired()) {
 
-            echo $this->app_config_cred['category'];
 
-            $model = new Session();
             $fetch = $model->where('whatsapp_id', $this->userphone)
             ->where('bot_category', $this->app_config_cred['category'])->first();
             $this->user_session_data = json_decode($fetch->session_data, true);
         } else {
 
             $fetch = $model->where('whatsapp_id', $this->userphone)
-            ->where('bot_category', $this->app_config_cred['category'])->first();
+            ->where('bot_category',$this->app_config_cred['category'])->first();
             $this->user_session_data = json_decode($fetch->session_data, true);
         }
     }

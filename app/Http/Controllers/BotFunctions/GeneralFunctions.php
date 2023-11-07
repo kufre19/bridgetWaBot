@@ -30,8 +30,8 @@ class GeneralFunctions extends BotController {
     {
         
         parent::__construct(session()->get("request_stored"));
-        $this->fetch_user_session();
         $this->app_config_cred = $this->get_meta_app_cred($this->wa_phone_id);
+        $this->fetch_user_session();
 
 
     }
