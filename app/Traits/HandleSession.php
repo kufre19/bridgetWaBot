@@ -90,6 +90,8 @@ trait HandleSession
         $model = new Session();
         if ($this->did_session_expired()) {
 
+            echo $this->app_config_cred['category'];
+
             $model = new Session();
             $fetch = $model->where('whatsapp_id', $this->userphone)
             ->where('bot_category', $this->app_config_cred['category'])->first();

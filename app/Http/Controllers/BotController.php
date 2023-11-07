@@ -48,7 +48,7 @@ class BotController extends Controller
     {
         $this->store_request_obj($request);
 
-        $this->LogInput($request->all());
+        // $this->LogInput($request->all());
         if (!isset($request['hub_verify_token'])) {
             if (isset($request['entry'])) {
 
@@ -153,7 +153,9 @@ class BotController extends Controller
     public function fetch_user()
     {
         $model = new User();
-        $fetch = $model->where('whatsapp_id', $this->userphone)->first();
+        $fetch = $model->where('whatsapp_id', $this->userphone)
+        ->where('bot_category',$this->app_config_cred['category'])
+        ->first();
         if (!$fetch) {
             $this->register_user();
         } else {
