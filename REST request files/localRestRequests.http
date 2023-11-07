@@ -2,41 +2,42 @@ GET http://0.0.0.0:8000/api/bot
 Content-Type: application/json
 
 {
-    "object": "whatsapp_business_account",
-    "entry": [
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "105738109234424",
+      "changes": [
         {
-            "id": "105738109234424",
-            "changes": [
-                {
-                    "value": {
-                        "messaging_product": "whatsapp",
-                        "metadata": {
-                            "display_phone_number": "2348188885192",
-                            "phone_number_id": "159854773878577"
-                        },
-                        "contacts": [
-                            {
-                                "profile": {
-                                    "name": "Maxi Tech"
-                                },
-                                "wa_id": "2347016791512"
-                            }
-                        ],
-                        "messages": [
-                            {
-                                "from": "2347016791512",
-                                "id": "wamid.HBgNMjM0OTA1NzYxOTg2ORUCABIYFjNFQjAzRDFENUIzMjRBNTJGNTA4NjYA",
-                                "timestamp": "1689454241",
-                                "text": {
-                                    "body": "hi"
-                                },
-                                "type": "text"
-                            }
-                        ]
-                    },
-                    "field": "messages"
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "2348188885192",
+              "phone_number_id": "115004944961557"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgNMjM0NzAxNjc5MTUxMhUCABEYEjA0NTM3OUQ2M0IxRjlFRDZCMgA=",
+                "status": "sent",
+                "timestamp": "1699354706",
+                "recipient_id": "2347016791512",
+                "conversation": {
+                  "id": "3545a3d7b85fa242ecd49476ba05c447",
+                  "expiration_timestamp": "1699392000",
+                  "origin": {
+                    "type": "service"
+                  }
+                },
+                "pricing": {
+                  "billable": true,
+                  "pricing_model": "CBP",
+                  "category": "service"
                 }
+              }
             ]
+          },
+          "field": "messages"
         }
-    ]
+      ]
+    }
+  ]
 }

@@ -19,16 +19,16 @@ Content-Type: application/json
                                 "profile": {
                                     "name": "Maxi Tech"
                                 },
-                                "wa_id": "2349057619869"
+                                "wa_id": "2347016791512"
                             }
                         ],
                         "messages": [
                             {
-                                "from": "2349057619869",
+                                "from": "2347016791512",
                                 "id": "wamid.HBgNMjM0OTA1NzYxOTg2ORUCABIYFjNFQjAzRDFENUIzMjRBNTJGNTA4NjYA",
                                 "timestamp": "1689454241",
                                 "text": {
-                                    "body": "1"
+                                    "body": "hello"
                                 },
                                 "type": "text"
                             }
