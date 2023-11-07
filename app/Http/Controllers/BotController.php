@@ -54,7 +54,7 @@ class BotController extends Controller
 
 
             // Any code here that might throw an exception.
-            if (!isset($request['entry'][0]['changes'][0]["value"]['contacts'])) {
+            if (isset($request['entry'][0]['changes'][0]["statuses"])) {
                 $this->message_type = "end unknown";
                 $this->LogInput($request->all());
             } else {
@@ -209,7 +209,7 @@ class BotController extends Controller
 
     public function store_request_obj(Request $request)
     {
-        session()->put("request_stored", $request->all());
+        session()->put("request_stored", $request);
     }
     // for testing purposes
     public function LogInput($data)
