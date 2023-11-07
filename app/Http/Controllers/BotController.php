@@ -16,6 +16,7 @@ use App\Traits\SendMessage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 
 class BotController extends Controller
 {
@@ -50,50 +51,57 @@ class BotController extends Controller
 
         // $this->LogInput($request->all());
         if (!isset($request['hub_verify_token'])) {
-            if (isset($request['entry'])) {
 
-                $this->username = $request['entry'][0]['changes'][0]["value"]['contacts'][0]['profile']['name'] ?? "there";
-                $this->userphone = $request['entry'][0]['changes'][0]["value"]['contacts'][0]['wa_id'];
-                $this->wa_phone_id = $request['entry'][0]['changes'][0]["value"]['metadata']["phone_number_id"];
-
-
-                // info($request);
-
-                if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['text'])) {
-                    $this->user_message_original = $request['entry'][0]['changes'][0]["value"]['messages'][0]['text']['body'];
-                    $this->user_message_lowered  = strtolower($this->user_message_original);
-                    $this->message_type = "text";
+            try {
+                // Any code here that might throw an exception.
+                if (!isset($request['entry'])) {
+                    throw new \Exception('Entry key is not set in the request.');
                 }
+                // Remaining initialization code that depends on $request['entry'] being set...
+            } catch (\Exception $e) {
+                Log::error($e->getMessage(), ['exception' => $e]);
+                $this->message_type = "end unknown";
+            }
 
-                if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['image'])) {
-                    $this->wa_image_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['image']['id'];
-                    $this->message_type = "image";
+            $this->username = $request['entry'][0]['changes'][0]["value"]['contacts'][0]['profile']['name'] ?? "there";
+            $this->userphone = $request['entry'][0]['changes'][0]["value"]['contacts'][0]['wa_id'];
+            $this->wa_phone_id = $request['entry'][0]['changes'][0]["value"]['metadata']["phone_number_id"];
+
+
+            // info($request);
+
+            if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['text'])) {
+                $this->user_message_original = $request['entry'][0]['changes'][0]["value"]['messages'][0]['text']['body'];
+                $this->user_message_lowered  = strtolower($this->user_message_original);
+                $this->message_type = "text";
+            }
+
+            if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['image'])) {
+                $this->wa_image_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['image']['id'];
+                $this->message_type = "image";
+            }
+
+
+            if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive'])) {
+                $interactive_type = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['type'];
+                switch ($interactive_type) {
+                    case 'list_reply':
+                        $this->menu_item_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['list_reply']['id'];
+                        $this->message_type = "menu";
+
+                        break;
+
+                    case 'button_reply':
+                        $this->button_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['button_reply']['id'];
+                        $this->message_type = "button";
+
+                        break;
+
+
+                    default:
+                        dd("unknow command");
+                        break;
                 }
-
-
-                if (isset($request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive'])) {
-                    $interactive_type = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['type'];
-                    switch ($interactive_type) {
-                        case 'list_reply':
-                            $this->menu_item_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['list_reply']['id'];
-                            $this->message_type = "menu";
-
-                            break;
-
-                        case 'button_reply':
-                            $this->button_id = $request['entry'][0]['changes'][0]["value"]['messages'][0]['interactive']['button_reply']['id'];
-                            $this->message_type = "button";
-
-                            break;
-
-
-                        default:
-                            dd("unknow command");
-                            break;
-                    }
-                }
-            }else {
-                $this->message_type = "end unkown";
             }
         }
     }
@@ -101,10 +109,8 @@ class BotController extends Controller
 
     public function index(Request $request)
     {
-        if($this->message_type == "end unkown")
-        {
+        if ($this->message_type == "end unkown") {
             return response("ok", 200);
-
         }
         if (isset($request['hub_verify_token'])) {
             return $this->verify_bot($request);
@@ -154,8 +160,8 @@ class BotController extends Controller
     {
         $model = new User();
         $fetch = $model->where('whatsapp_id', $this->userphone)
-        ->where('bot_category',$this->app_config_cred['category'])
-        ->first();
+            ->where('bot_category', $this->app_config_cred['category'])
+            ->first();
         if (!$fetch) {
             $this->register_user();
         } else {
