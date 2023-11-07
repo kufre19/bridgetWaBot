@@ -84,7 +84,8 @@ class TermsAndCondition extends GeneralFunctions implements AbilityInterface
     public function update_Wa_user_terms()
     {
         $usermodel = new User();
-        $user = $usermodel->where('whatsapp_id',$this->userphone)->update([
+        $user = $usermodel->where('whatsapp_id',$this->userphone) ->where('bot_category', $this->app_config_cred['category'])
+        ->update([
             "accepted_terms"=>"accepted"
         ]);
 

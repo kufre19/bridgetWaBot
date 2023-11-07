@@ -49,9 +49,8 @@ trait HandleSession
     {
         $model = new Session();
         
-        $bot_category =  $this->app_config_cred['category'];
         $fetch = $model->select('expires_in')->where('whatsapp_id', $this->userphone)
-        ->where('bot_category', $bot_category)
+        ->where('bot_category', $this->app_config_cred['category'])
         ->first();
 
         if (!$fetch) {
