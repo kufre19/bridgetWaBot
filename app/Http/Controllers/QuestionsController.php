@@ -31,7 +31,7 @@ class QuestionsController extends Controller
     public function list()
     {
         $question_model = new Questions();
-        $questions = $question_model->paginate(15);
+        $questions = $question_model->latest()->paginate(10);
 
         return view("questions_and_answers.list",compact("questions"));
     }
