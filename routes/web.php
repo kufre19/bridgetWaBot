@@ -63,4 +63,5 @@ Route::post("questions/store", [\App\Http\Controllers\QuestionsController::class
 Route::get("list-questions",[\App\Http\Controllers\QuestionsController::class,"list"]);
 Route::get("edit-questions/{id}",[\App\Http\Controllers\QuestionsController::class,"edit"]);
 Route::post("store/edit-questions",[\App\Http\Controllers\QuestionsController::class,"store_edit"]);
+Route::delete('/delete-question/{id}', [\App\Http\Controllers\QuestionsController::class, 'destroy'])->name('delete-question');
 

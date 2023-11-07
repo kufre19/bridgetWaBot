@@ -88,4 +88,16 @@ class QuestionsController extends Controller
         return redirect('list-questions')->with('success', 'Question and Answer updated successfully!');
 
     }
+    public function destroy($id)
+    {
+        $question = Questions::findOrFail($id); // Make sure to handle the case where the id doesn't exist
+        $answer_model = new Answers();
+
+        $answer_model->where("question_id",$question->id)->delete();
+        // Delete the question
+        $question->delete();
+
+        // Redirect back with a success message
+        return redirect('list-questions')->with('success', 'Question deleted successfully.');
+    }
 }
