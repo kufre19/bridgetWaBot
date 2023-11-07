@@ -105,9 +105,9 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
         $question_progress = $this->user_session_data['question_progress']['diabetes'];
         $old_corresponding = $question->corresponding_number;
         $new_corresponding = $old_corresponding + 1;
-        $question_progress['questions_asked'][] = $new_corresponding;
         if (!in_array($new_corresponding, $question_progress['questions_asked']))
         {
+            $question_progress['questions_asked'][] = $new_corresponding;
           
     
             $new_session = $this->user_session_data;
