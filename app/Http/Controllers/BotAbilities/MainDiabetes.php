@@ -90,7 +90,13 @@ class MainDiabetes extends BotFunctionsGeneralFunctions implements AbilityInterf
 
             $this->updateQuestionProgress($question);
             $answer = Answers::where("question_id", $question->id)->first();
-            return  $answer->answers;
+            $the_question = $question->questions;
+            $ans = <<<MSG
+            $the_question
+
+            $answer->answers
+            MSG;
+            return  $ans;
         }
     }
 
