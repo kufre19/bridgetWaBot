@@ -109,8 +109,9 @@ class BotController extends Controller
     public function index(Request $request)
     {
         if ($this->message_type == "end unkown") {
-            return response("ok", 200);
-        }
+            http_response_code(200);
+            exit(200);        }
+
         if (isset($request['hub_verify_token'])) {
             return $this->verify_bot($request);
         }
@@ -208,7 +209,7 @@ class BotController extends Controller
 
     public function store_request_obj(Request $request)
     {
-        session()->put("request_stored", $request);
+        session()->put("request_stored", $request->all());
     }
     // for testing purposes
     public function LogInput($data)
