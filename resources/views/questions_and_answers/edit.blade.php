@@ -108,16 +108,19 @@
                     </form>
 
                 </div>
-                <!-- Add this form below your existing submit button for deletion -->
-                <form method="POST" action="{{ url('delete-question/' . $question->id) }}"
+               
+                <!-- Nested row for non-featured blog posts-->
+
+
+            </div>
+            <div class="col">
+                 <!-- Add this form below your existing submit button for deletion -->
+                 <form method="POST" action="{{ url('delete-question/' . $question->id) }}"
                     onsubmit="return confirm('Are you sure you want to delete this question?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
-                <!-- Nested row for non-featured blog posts-->
-
-
             </div>
             <!-- Side widgets-->
 
