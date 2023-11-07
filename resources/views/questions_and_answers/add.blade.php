@@ -60,8 +60,8 @@
                              <div class="form-group">
                                 <label for="cat">Category:</label>
                                 <select name="category" id="cat" class="form-control">
-                                    <option value="hypertension">Hypertention</option>
                                     <option value="diabetes">Diabetes</option>
+                                    <option value="hypertension">Hypertention</option>
                                 </select>
                                 
                             </div>
