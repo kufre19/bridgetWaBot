@@ -55,7 +55,7 @@ class BotController extends Controller
 
             // Any code here that might throw an exception.
             if (isset($request['entry'][0]['changes'][0]['value']['statuses'])) {
-                $this->message_type ="stop";
+                $this->message_type = "stop";
                 // $this->LogInput($request->all());
             } else {
                 // Remaining initialization code that depends on $request['entry'] being set...
@@ -110,7 +110,7 @@ class BotController extends Controller
     {
         if ($this->message_type == "stop") {
             http_response_code(200);
-            return exit(200);        
+            return exit(200);
         }
 
         if (isset($request['hub_verify_token'])) {
@@ -162,11 +162,25 @@ class BotController extends Controller
         $model = new User();
         $fetch = $model->where('whatsapp_id', $this->userphone)
             ->where('bot_category', $this->app_config_cred['category'])
+            ->where("subscription", "active")
             ->first();
-        if (!$fetch) {
-            $this->register_user();
+
+        if ($this->app_config_cred['category'] == "diabetes") {
+            if ($fetch) {
+                $this->fetch_user_session();
+            } else {
+                $message = "Sorry this account does not have an active subscription";
+                $data = $this->make_text_message($message,$this->userphone);
+                $this->send_post_curl($data);
+               return $this->ResponsedWith200();
+            }
         } else {
-            $this->fetch_user_session();
+            if (!$fetch) {
+                $this->register_user();
+            } else {
+
+                $this->fetch_user_session();
+            }
         }
     }
 
@@ -203,7 +217,7 @@ class BotController extends Controller
             } else {
                 echo 'Invalid Verify Token';
                 http_response_code(500);
-                return exit(500);   
+                return exit(500);
             }
         }
     }
